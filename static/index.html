@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberShield</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   VARIABLES & RESET
+══════════════════════════════════════════════ */
+:root {
+  --bg:      #060a10;
+  --surf:    #0b1220;
+  --card:    #0f1a2e;
+  --border:  #1a3050;
+  --cyan:    #00e5ff;
+  --green:   #00ff88;
+  --red:     #ff2d55;
+  --yellow:  #ffd60a;
+  --purple:  #bf5af2;
+  --orange:  #ff9500;
+  --text:    #b8d0e8;
+  --muted:   #3a5570;
+  --white:   #e8f4ff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════
+   PANTALLAS
+══════════════════════════════════════════════ */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  overflow-y: auto;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ══════════════════════════════════════════════
+   FONDO ANIMADO (compartido)
+══════════════════════════════════════════════ */
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.bg-glow-1 {
+  position: absolute;
+  width: 700px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,229,255,0.07) 0%, transparent 70%);
+  top: -150px; left: 50%;
+  transform: translateX(-50%);
+  animation: glow-drift 8s ease-in-out infinite alternate;
+}
+.bg-glow-2 {
+  position: absolute;
+  width: 400px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(191,90,242,0.05) 0%, transparent 70%);
+  bottom: 0; right: 0;
+  animation: glow-drift 10s ease-in-out infinite alternate-reverse;
+}
+@keyframes glow-drift {
+  from { transform: translateX(-50%) scale(1); }
+  to   { transform: translateX(-50%) scale(1.2); }
+}
+
+/* Scan line */
+.scanline {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════
+   PANTALLA 1 — BIENVENIDA
+══════════════════════════════════════════════ */
+#s-welcome {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.welcome-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Logo animado */
+.shield-wrap {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 28px;
+}
+.shield-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--cyan);
+  animation: ring-spin 12s linear infinite;
+  opacity: 0.5;
+}
+.shield-ring::before {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  top: -4px; left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px var(--cyan);
+}
+.shield-ring-2 {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0,229,255,0.2);
+  animation: ring-spin 8s linear infinite reverse;
+}
+@keyframes ring-spin { to { transform: rotate(360deg); } }
+
+.shield-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46px;
+  animation: shield-breathe 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(0,229,255,0.6));
+}
+@keyframes shield-breathe {
+  0%,100% { filter: drop-shadow(0 0 15px rgba(0,229,255,0.5)); }
+  50%      { filter: drop-shadow(0 0 35px rgba(0,229,255,0.9)); }
+}
+
+/* Título */
+.cs-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(36px, 9vw, 64px);
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: 3px;
+  line-height: 1;
+  text-shadow: 0 0 40px rgba(0,229,255,0.3);
+  animation: fade-up 0.8s ease both;
+}
+.cs-logo em { font-style: normal; color: var(--cyan); }
+
+.cs-tagline {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  margin: 10px 0 0;
+  opacity: 0.7;
+  animation: fade-up 0.8s 0.1s ease both;
+}
+
+/* Frase épica */
+.epic-box {
+  margin: 32px auto;
+  padding: 24px 28px;
+  background: rgba(0,229,255,0.04);
+  border: 1px solid rgba(0,229,255,0.15);
+  border-left: 3px solid var(--cyan);
+  border-radius: 3px;
+  animation: fade-up 0.8s 0.2s ease both;
+}
+.epic-quote {
+  font-size: clamp(16px, 3.5vw, 20px);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.epic-quote strong { color: var(--cyan); }
+.epic-source {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Stats rápidos */
+.quick-stats {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  animation: fade-up 0.8s 0.3s ease both;
+}
+.qs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.qs-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+
+/* Botón CTA */
+.btn-cta {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  padding: 18px 52px;
+  background: transparent;
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s;
+  text-transform: uppercase;
+  animation: fade-up 0.8s 0.4s ease both;
+}
+.btn-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.btn-cta:hover::before { transform: translateX(0); }
+.btn-cta:hover { color: var(--bg); }
+.btn-cta span { position: relative; z-index: 1; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════
+   PANTALLA 2 — AGENTE
+══════════════════════════════════════════════ */
+#s-agent {
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.agent-header {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.agent-header-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 2px;
+}
+.agent-header-step {
+  margin-left: auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+
+.agent-body {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Nombre */
+.name-input-wrap {
+  position: relative;
+}
+.name-input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 18px 14px 48px;
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  letter-spacing: 2px;
+}
+.name-input::placeholder {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.name-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.08), 0 0 20px rgba(0,229,255,0.1);
+}
+.name-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+}
+.name-counter {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+/* Avatares */
+.avatars-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+@media (max-width: 480px) {
+  .avatars-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+}
+
+.avatar-btn {
+  aspect-ratio: 1;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+  padding: 8px 4px;
+}
+.avatar-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.avatar-btn:hover { border-color: var(--cyan); transform: translateY(-3px); }
+.avatar-btn:hover::before { opacity: 0.06; }
+.avatar-btn.selected {
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px rgba(0,229,255,0.25), inset 0 0 20px rgba(0,229,255,0.05);
+}
+.avatar-btn.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 4px; right: 5px;
+  font-size: 9px;
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+}
+.avatar-emoji { font-size: clamp(22px, 5vw, 30px); position: relative; z-index: 1; }
+.avatar-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(7px, 1.5vw, 9px);
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  line-height: 1.2;
+}
+.avatar-btn.selected .avatar-name { color: var(--cyan); }
+
+/* Botón confirm */
+.btn-confirm {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 17px;
+  width: 100%;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.btn-confirm.ready {
+  opacity: 1;
+  pointer-events: all;
+}
+.btn-confirm.ready:hover {
+  box-shadow: 0 0 30px rgba(0,229,255,0.4);
+  transform: translateY(-2px);
+}
+
+/* ══════════════════════════════════════════════
+   PANTALLA 3 — MAPA DE MÓDULOS
+══════════════════════════════════════════════ */
+#s-map {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.map-header {
+  position: relative;
+  z-index: 1;
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.map-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--cyan);
+  letter-spacing: 2px;
+}
+
+.player-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 6px 14px 6px 10px;
+}
+.player-badge-avatar { font-size: 20px; }
+.player-badge-info {}
+.player-badge-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  color: var(--white);
+  letter-spacing: 1px;
+}
+.player-badge-xp {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--yellow);
+  letter-spacing: 1px;
+}
+
+.map-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 28px 24px 40px;
+  overflow-y: auto;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.map-title-row {
+  margin-bottom: 28px;
+}
+.map-heading {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(18px, 4vw, 26px);
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.map-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+
+/* Módulos */
+.modules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.module-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s;
+}
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 3px;
+}
+
+/* Estados */
+.module-card.unlocked {
+  cursor: pointer;
+  border-color: rgba(0,229,255,0.3);
+}
+.module-card.unlocked::before { background: var(--cyan); }
+.module-card.unlocked:hover {
+  border-color: var(--cyan);
+  transform: translateX(4px);
+  box-shadow: -4px 0 20px rgba(0,229,255,0.1), 0 0 40px rgba(0,229,255,0.05);
+}
+
+.module-card.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+.module-card.locked::before { background: var(--muted); }
+
+.module-card.completed::before { background: var(--green); }
+
+/* Icono del módulo */
+.module-icon-wrap {
+  flex-shrink: 0;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border: 1px solid var(--border);
+  background: var(--surf);
+  position: relative;
+}
+.module-card.unlocked .module-icon-wrap {
+  border-color: rgba(0,229,255,0.3);
+  box-shadow: 0 0 16px rgba(0,229,255,0.15);
+}
+
+.module-info { flex: 1; min-width: 0; }
+.module-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.module-name {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(13px, 3vw, 16px);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.module-card.unlocked .module-name { color: var(--cyan); }
+.module-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.module-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.module-xp {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--yellow);
+  letter-spacing: 1px;
+}
+.module-status {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.status-open     { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.3); }
+.status-locked   { background: rgba(58,85,112,0.2); color: var(--muted); border: 1px solid var(--border); }
+.status-done     { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+
+/* ══════════════════════════════════════════════
+   PANTALLA 4 — JUEGO (módulo 1)
+   (Contenedor vacío — se carga dinámicamente)
+══════════════════════════════════════════════ */
+#s-game {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.game-host {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ══════════════════════════════════════════════
+   JUEGO MÓDULO 1 EMBEBIDO
+══════════════════════════════════════════════ */
+.game-topbar {
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-back {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 6px 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.btn-back:hover { color: var(--cyan); border-color: var(--cyan); }
+
+.gtb-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  color: var(--cyan);
+  letter-spacing: 2px;
+}
+.gtb-stats {
+  margin-left: auto;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.gtb-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.gtb-stat-lbl {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+.gtb-stat-val {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+.gtb-stat-val.cy { color: var(--yellow); }
+.gtb-stat-val.gr { color: var(--green); }
+.gtb-stat-val.rd { color: var(--red); }
+
+.timer-strip { padding: 0 20px; background: var(--surf); border-bottom: 1px solid var(--border); }
+.timer-bg { height: 3px; background: var(--border); }
+.timer-fill { height: 100%; background: var(--cyan); transition: width 0.08s linear, background 0.3s; box-shadow: 0 0 6px var(--cyan); }
+
+.pdots { display: flex; gap: 8px; justify-content: center; padding: 12px 20px; }
+.pdot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  background: transparent;
+  transition: all 0.3s;
+}
+.pdot.curr { border-color: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation: pd-pulse 1s infinite; }
+.pdot.ok   { background: var(--green); border-color: var(--green); box-shadow: 0 0 5px var(--green); }
+.pdot.err  { background: var(--red);   border-color: var(--red);   box-shadow: 0 0 5px var(--red); }
+@keyframes pd-pulse { 50% { box-shadow: 0 0 14px var(--cyan); } }
+
+.card-zone {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+.tcard {
+  max-width: 500px;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  animation: card-appear 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes card-appear {
+  from { opacity:0; transform:scale(0.88) translateY(16px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.tcard-stripe { height: 3px; }
+.stripe-email  { background: var(--purple); }
+.stripe-sms    { background: var(--green); }
+.stripe-web    { background: var(--yellow); }
+.stripe-social { background: var(--orange); }
+
+.tcard-head {
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tcard-icon { font-size: 20px; }
+.tcard-type-lbl {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.tcard-from { font-size: 13px; font-weight: 600; color: var(--white); }
+.tcard-body { padding: 16px 18px; }
+.tcard-subject { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+.tcard-content { font-size: 13px; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+.tcard-link {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--cyan);
+  word-break: break-all;
+}
+.tcard-clues {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
+  display: none;
+}
+.tcard-clues.on { display: block; }
+.clue-hd {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--yellow);
+  letter-spacing: 2px;
+  margin-bottom: 7px;
+}
+.clue-row { font-size: 12px; color: var(--text); padding: 3px 0; display: flex; gap: 7px; }
+.clue-row::before { content:'→'; color:var(--yellow); flex-shrink:0; }
+
+.act-zone {
+  padding: 0 20px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+.abtn {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 14px 8px;
+  border: 2px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.abtn .ai { font-size: 22px; }
+.abtn-safe  { border-color: var(--green); color: var(--green); }
+.abtn-phish { border-color: var(--red);   color: var(--red); }
+.abtn-safe:hover  { background: rgba(0,255,136,0.1); transform: translateY(-2px); box-shadow: 0 0 16px rgba(0,255,136,0.2); }
+.abtn-phish:hover { background: rgba(255,45,85,0.1);  transform: translateY(-2px); box-shadow: 0 0 16px rgba(255,45,85,0.2); }
+.hint-btn {
+  grid-column: 1 / -1;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 2px;
+  padding: 7px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.hint-btn:hover { color: var(--yellow); border-color: var(--yellow); }
+
+/* FEEDBACK */
+.fb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.fb-overlay.on { opacity: 1; pointer-events: all; }
+.fb-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(6,10,16,0.88);
+  backdrop-filter: blur(5px);
+}
+.fb-box {
+  position: relative;
+  max-width: 380px;
+  width: 100%;
+  border-radius: 5px;
+  padding: 28px 24px;
+  text-align: center;
+  border: 2px solid;
+  animation: fb-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes fb-pop { from{transform:scale(0.65);} to{transform:scale(1);} }
+.fb-box.ok   { background:#041209; border-color:var(--green); box-shadow:0 0 50px rgba(0,255,136,0.15); }
+.fb-box.fail { background:#120407; border-color:var(--red);   box-shadow:0 0 50px rgba(255,45,85,0.15); }
+.fb-ico { font-size:48px; margin-bottom:10px; display:block; }
+.fb-title { font-family:'Orbitron',monospace; font-size:20px; font-weight:900; margin-bottom:8px; }
+.fb-box.ok   .fb-title { color:var(--green); }
+.fb-box.fail .fb-title { color:var(--red); }
+.fb-explain { font-size:13px; line-height:1.7; color:var(--text); margin-bottom:14px; }
+.fb-xp { font-family:'Share Tech Mono',monospace; font-size:12px; padding:6px 16px; border-radius:2px; display:inline-block; margin-bottom:18px; }
+.fb-box.ok   .fb-xp { background:rgba(0,255,136,0.1); color:var(--green); }
+.fb-box.fail .fb-xp { background:rgba(255,45,85,0.1);  color:var(--red); }
+.btn-next {
+  font-family:'Orbitron',monospace; font-size:11px; font-weight:700;
+  letter-spacing:3px; padding:11px 28px;
+  background:transparent; border:1px solid var(--muted);
+  color:var(--text); border-radius:2px; cursor:pointer; transition:all 0.2s;
+  text-transform:uppercase;
+}
+.btn-next:hover { border-color:var(--cyan); color:var(--cyan); }
+
+/* RESULTADO */
+.result-host {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  overflow-y: auto;
+}
+.result-host.on { display: flex; }
+.r-shield { font-size: 70px; margin-bottom: 12px; animation: shield-breathe 2s infinite; }
+.r-title { font-family:'Orbitron',monospace; font-size:clamp(22px,6vw,38px); font-weight:900; color:var(--white); margin-bottom:6px; }
+.r-sub { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--cyan); letter-spacing:3px; margin-bottom:36px; opacity:0.8; }
+.r-stats { display:flex; gap:14px; justify-content:center; margin-bottom:32px; flex-wrap:wrap; }
+.r-stat { background:var(--surf); border:1px solid var(--border); border-radius:4px; padding:18px 24px; min-width:110px; }
+.r-sv { font-family:'Orbitron',monospace; font-size:34px; font-weight:900; line-height:1; margin-bottom:5px; }
+.r-sl { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+.r-badge { background:var(--surf); border:1px solid var(--border); border-radius:4px; padding:18px 28px; margin-bottom:32px; display:inline-block; }
+.r-badge-ico { font-size:38px; margin-bottom:6px; }
+.r-badge-lbl { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--yellow); letter-spacing:3px; text-transform:uppercase; margin-bottom:4px; }
+.r-badge-name { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; color:var(--white); }
+.r-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-replay { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; letter-spacing:2px; padding:14px 32px; background:var(--cyan); color:var(--bg); border:none; border-radius:3px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+.btn-replay:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,229,255,0.3); }
+.btn-map { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; letter-spacing:2px; padding:14px 32px; background:transparent; color:var(--text); border:1px solid var(--border); border-radius:3px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+.btn-map:hover { border-color:var(--cyan); color:var(--cyan); }
+
+canvas#ptcl { position:fixed; inset:0; pointer-events:none; z-index:400; }
+</style>
+</head>
+<body>
+
+<!-- FX DE FONDO -->
+<div class="bg-fx">
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <div class="scanline"></div>
+</div>
+
+<!-- ═══ S1: BIENVENIDA ═══ -->
+<div id="s-welcome" class="screen active">
+  <div class="welcome-inner">
+    <div class="shield-wrap">
+      <div class="shield-ring"></div>
+      <div class="shield-ring-2"></div>
+      <div class="shield-icon">🛡️</div>
+    </div>
+
+    <h1 class="cs-logo">CYBER<em>SHIELD</em></h1>
+    <p class="cs-tagline">Plataforma de Entrenamiento en Ciberseguridad</p>
+
+    <div class="epic-box">
+      <p class="epic-quote">
+        "El <strong>90% de los ataques digitales</strong> comienzan con un error humano.<br>
+        Hoy, ese humano <strong>no serás tú</strong>."
+      </p>
+      <div class="epic-source">— Basado en datos del Informe Global de Ciberseguridad 2024</div>
+    </div>
+
+    <div class="quick-stats">
+      <div class="qs"><div class="qs-dot" style="background:var(--cyan)"></div> 6 módulos de entrenamiento</div>
+      <div class="qs"><div class="qs-dot" style="background:var(--green)"></div> Casos reales</div>
+      <div class="qs"><div class="qs-dot" style="background:var(--yellow)"></div> Insignias y XP</div>
+    </div>
+
+    <button class="btn-cta" onclick="showScreen('s-agent')">
+      <span>⚡ COMENZAR MISIÓN</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ S2: CREAR AGENTE ═══ -->
+<div id="s-agent" class="screen">
+  <div class="agent-header">
+    <span class="agent-header-logo">🛡️ CYBERSHIELD</span>
+    <span class="agent-header-step">PASO 01 DE 01 — IDENTIFICACIÓN DE AGENTE</span>
+  </div>
+
+  <div class="agent-body">
+
+    <!-- Nombre -->
+    <div>
+      <div class="section-title">01 · Elige tu nombre de agente</div>
+      <div class="name-input-wrap">
+        <span class="name-input-icon">🕵️</span>
+        <input
+          id="agent-name"
+          class="name-input"
+          type="text"
+          maxlength="16"
+          placeholder="ESCRIBE TU NOMBRE..."
+          oninput="onNameChange()"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+      <div class="name-counter"><span id="name-len">0</span>/16</div>
+    </div>
+
+    <!-- Avatares -->
+    <div>
+      <div class="section-title">02 · Escoge tu avatar</div>
+      <div class="avatars-grid" id="avatars-grid"></div>
+    </div>
+
+    <!-- Confirmar -->
+    <button class="btn-confirm" id="btn-confirm" onclick="confirmAgent()">
+      🚀 ACTIVAR AGENTE Y ENTRAR AL MAPA
+    </button>
+
+  </div>
+</div>
+
+<!-- ═══ S3: MAPA DE MÓDULOS ═══ -->
+<div id="s-map" class="screen">
+  <div class="map-header">
+    <div class="map-logo">🛡️ CYBERSHIELD</div>
+    <div class="player-badge" id="player-badge">
+      <span class="player-badge-avatar" id="pb-avatar">🕵️</span>
+      <div class="player-badge-info">
+        <div class="player-badge-name" id="pb-name">AGENTE</div>
+        <div class="player-badge-xp" id="pb-xp">⚡ 0 XP</div>
+      </div>
+    </div>
+  </div>
+  <div class="map-body">
+    <div class="map-title-row">
+      <div class="map-heading">CENTRO DE OPERACIONES</div>
+      <div class="map-sub">SELECCIONA UN MÓDULO PARA INICIAR ENTRENAMIENTO</div>
+    </div>
+    <div class="modules-list" id="modules-list"></div>
+  </div>
+</div>
+
+<!-- ═══ S4: JUEGO ═══ -->
+<div id="s-game" class="screen">
+  <div class="game-host" id="game-host">
+
+    <div class="game-topbar">
+      <button class="btn-back" onclick="goMap()">← MAPA</button>
+      <div class="gtb-title">🛡️ MÓDULO 01 · DETECTOR DE AMENAZAS</div>
+      <div class="gtb-stats">
+        <div class="gtb-stat"><div class="gtb-stat-lbl">XP</div><div class="gtb-stat-val cy" id="g-xp">0</div></div>
+        <div class="gtb-stat"><div class="gtb-stat-lbl">OK</div><div class="gtb-stat-val gr" id="g-ok">0</div></div>
+        <div class="gtb-stat"><div class="gtb-stat-lbl">ERR</div><div class="gtb-stat-val rd" id="g-err">0</div></div>
+      </div>
+    </div>
+
+    <div class="timer-strip"><div class="timer-bg"><div class="timer-fill" id="t-fill" style="width:100%"></div></div></div>
+    <div class="pdots" id="pdots"></div>
+
+    <div class="card-zone">
+      <div class="tcard" id="tcard">
+        <div class="tcard-stripe" id="tc-stripe"></div>
+        <div class="tcard-head">
+          <span class="tcard-icon" id="tc-icon">📧</span>
+          <div>
+            <div class="tcard-type-lbl" id="tc-lbl">EMAIL</div>
+            <div class="tcard-from" id="tc-from">—</div>
+          </div>
+        </div>
+        <div class="tcard-body">
+          <div class="tcard-subject" id="tc-subj"></div>
+          <div class="tcard-content" id="tc-body"></div>
+          <div class="tcard-link" id="tc-link" style="display:none"></div>
+          <div class="tcard-clues" id="tc-clues">
+            <div class="clue-hd">💡 ANÁLISIS DEL EXPERTO</div>
+            <div id="clues-body"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act-zone">
+      <button class="abtn abtn-safe"  onclick="answer('safe')"><span class="ai">✅</span>SEGURO</button>
+      <button class="abtn abtn-phish" onclick="answer('phish')"><span class="ai">☠️</span>PHISHING</button>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Ver pista del experto (−5 XP)</button>
+    </div>
+
+  </div>
+
+  <!-- Feedback -->
+  <div class="fb-overlay" id="fb-overlay">
+    <div class="fb-box" id="fb-box">
+      <span class="fb-ico" id="fb-ico"></span>
+      <div class="fb-title" id="fb-title"></div>
+      <div class="fb-explain" id="fb-explain"></div>
+      <div class="fb-xp" id="fb-xp"></div>
+      <button class="btn-next" onclick="nextCard()">SIGUIENTE →</button>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="result-host" id="result-host">
+    <div class="r-shield" id="r-shield">🛡️</div>
+    <div class="r-title" id="r-title">MISIÓN COMPLETADA</div>
+    <div class="r-sub" id="r-sub"></div>
+    <div class="r-stats">
+      <div class="r-stat"><div class="r-sv" id="r-xp" style="color:var(--cyan)">0</div><div class="r-sl">XP</div></div>
+      <div class="r-stat"><div class="r-sv" id="r-ok" style="color:var(--green)">0/8</div><div class="r-sl">Correctas</div></div>
+      <div class="r-stat"><div class="r-sv" id="r-acc" style="color:var(--yellow)">0%</div><div class="r-sl">Precisión</div></div>
+    </div>
+    <div class="r-badge">
+      <div class="r-badge-ico" id="r-bico">🏅</div>
+      <div class="r-badge-lbl">Insignia Desbloqueada</div>
+      <div class="r-badge-name" id="r-bname">—</div>
+    </div>
+    <div class="r-actions">
+      <button class="btn-replay" onclick="replayGame()">⚡ REPETIR MÓDULO</button>
+      <button class="btn-map" onclick="goMap()">🗺️ VOLVER AL MAPA</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="ptcl"></canvas>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATOS AVATARES
+═══════════════════════════════════════════════ */
+const AVATARS = [
+  { emoji:'🤖', name:'IA-7' },
+  { emoji:'🥷', name:'Sombra' },
+  { emoji:'👾', name:'Pixel' },
+  { emoji:'🦾', name:'Cyborg' },
+  { emoji:'🕵️', name:'Agente X' },
+  { emoji:'🧬', name:'Neo' },
+  { emoji:'⚡', name:'Volt' },
+  { emoji:'🔮', name:'Oracle' },
+  { emoji:'🛸', name:'Alien-1' },
+  { emoji:'🦊', name:'Zorro' },
+];
+
+/* ═══════════════════════════════════════════════
+   MÓDULOS
+═══════════════════════════════════════════════ */
+const MODULES = [
+  { id:1, icon:'🎯', name:'Detector de Amenazas', desc:'Identifica phishing en emails, SMS y redes sociales', xp:80,  type:'email',   unlocked:true,  color:'var(--cyan)' },
+  { id:2, icon:'🔐', name:'Constructor de Escudos', desc:'Crea contraseñas invulnerables bajo presión', xp:100, type:'puzzle',  unlocked:false, color:'var(--green)' },
+  { id:3, icon:'🕵️', name:'Agente Encubierto',      desc:'Toma el rol del hacker — piensa como el enemigo', xp:120, type:'roles',   unlocked:false, color:'var(--purple)' },
+  { id:4, icon:'🗺️', name:'Mapa de Riesgos',        desc:'Navega decisiones del mundo real sin caer en trampas', xp:110, type:'board',   unlocked:false, color:'var(--yellow)' },
+  { id:5, icon:'🧠', name:'Mentalidad Segura',      desc:'Dilemas reales — ¿tomarías la decisión correcta?', xp:90,  type:'mindset', unlocked:false, color:'var(--orange)' },
+  { id:6, icon:'🏰', name:'Torre de Defensa',       desc:'Estrategia pura: protege tu base de oleadas de ataques', xp:150, type:'tower',   unlocked:false, color:'var(--red)' },
+];
+
+/* ═══════════════════════════════════════════════
+   ESTADO GLOBAL
+═══════════════════════════════════════════════ */
+let player = { name:'', avatar: null, xp: 0, completed: [] };
+let selectedAvatar = null;
+
+/* ═══════════════════════════════════════════════
+   NAVEGACIÓN
+═══════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════
+   PANTALLA AGENTE
+═══════════════════════════════════════════════ */
+function buildAvatars() {
+  const grid = document.getElementById('avatars-grid');
+  grid.innerHTML = '';
+  AVATARS.forEach((av, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'avatar-btn';
+    btn.innerHTML = `<span class="avatar-emoji">${av.emoji}</span><span class="avatar-name">${av.name}</span>`;
+    btn.onclick = () => selectAvatar(i, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function selectAvatar(i, btn) {
+  document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedAvatar = i;
+  checkReady();
+}
+
+function onNameChange() {
+  const input = document.getElementById('agent-name');
+  document.getElementById('name-len').textContent = input.value.length;
+  checkReady();
+}
+
+function checkReady() {
+  const name = document.getElementById('agent-name').value.trim();
+  const btn = document.getElementById('btn-confirm');
+  const ready = name.length >= 2 && selectedAvatar !== null;
+  btn.classList.toggle('ready', ready);
+}
+
+function confirmAgent() {
+  const name = document.getElementById('agent-name').value.trim();
+  if (!name || selectedAvatar === null) return;
+  player.name = name.toUpperCase();
+  player.avatar = AVATARS[selectedAvatar];
+  buildMap();
+  showScreen('s-map');
+}
+
+/* ═══════════════════════════════════════════════
+   MAPA
+═══════════════════════════════════════════════ */
+function buildMap() {
+  // Badge del jugador
+  document.getElementById('pb-avatar').textContent = player.avatar.emoji;
+  document.getElementById('pb-name').textContent = player.name;
+  document.getElementById('pb-xp').textContent = '⚡ ' + player.xp + ' XP';
+
+  const list = document.getElementById('modules-list');
+  list.innerHTML = '';
+
+  MODULES.forEach(mod => {
+    const isDone = player.completed.includes(mod.id);
+    const isOpen = mod.unlocked || isDone;
+    const card = document.createElement('div');
+    card.className = 'module-card ' + (isDone ? 'completed' : isOpen ? 'unlocked' : 'locked');
+
+    let statusHtml = '';
+    if (isDone) statusHtml = '<span class="module-status status-done">✓ Completado</span>';
+    else if (isOpen) statusHtml = '<span class="module-status status-open">▶ Jugar</span>';
+    else statusHtml = '<span class="module-status status-locked">🔒 Bloqueado</span>';
+
+    card.innerHTML = `
+      <div class="module-icon-wrap">${mod.icon}</div>
+      <div class="module-info">
+        <div class="module-num">MÓDULO 0${mod.id}</div>
+        <div class="module-name">${mod.name}</div>
+        <div class="module-desc">${mod.desc}</div>
+      </div>
+      <div class="module-right">
+        <div class="module-xp">⚡ ${mod.xp} XP</div>
+        ${statusHtml}
+      </div>
+    `;
+
+    if (isOpen && !isDone) card.onclick = () => startModule(mod.id);
+    list.appendChild(card);
+  });
+}
+
+function startModule(id) {
+  if (id === 1) { startGame(); showScreen('s-game'); }
+}
+
+function goMap() {
+  document.getElementById('result-host').classList.remove('on');
+  document.getElementById('fb-overlay').classList.remove('on');
+  buildMap();
+  showScreen('s-map');
+}
+
+/* ═══════════════════════════════════════════════
+   DATOS JUEGO MÓDULO 1
+═══════════════════════════════════════════════ */
+const CARDS = [
+  { type:'email', icon:'📧', lbl:'EMAIL', stripe:'stripe-email',
+    from:'seguridad@bancobcr.fi.cr.login-verify.xyz',
+    subj:'⚠️ Su cuenta ha sido bloqueada temporalmente',
+    body:'Estimado cliente, hemos detectado actividad inusual en su cuenta. Para desbloquearla debe verificar su identidad en las próximas 24 horas o perderá acceso permanentemente.',
+    link:'http://bcr-verificar-cuenta.xyz/login', ans:'phish',
+    clues:['El dominio del BCR es .fi.cr — no .xyz','Los bancos NUNCA bloquean cuentas por email','"24 horas o perderá acceso" es presión falsa'],
+    explain:'El dominio "bcr-verificar-cuenta.xyz" es falso. Los bancos de Costa Rica usan .fi.cr. Este es un phishing bancario clásico.', xp:10 },
+  { type:'sms', icon:'📱', lbl:'SMS', stripe:'stripe-sms',
+    from:'+506 8888-0000 (desconocido)',
+    subj:'Correos de CR — Paquete retenido',
+    body:'Su paquete #CR4829 está retenido en aduana. Pague ₡2.500 de impuesto para liberarlo antes de hoy o será devuelto.',
+    link:'correos-cr-pago.net/paquete', ans:'phish',
+    clues:['Correos CR nunca cobra por SMS con link externo','El sitio oficial es correoscr.com','Los cobros reales se hacen en sucursales'],
+    explain:'Smishing clásico. Correos de Costa Rica no envía SMS con links de pago. El sitio oficial es correoscr.com.', xp:10 },
+  { type:'email', icon:'📧', lbl:'EMAIL', stripe:'stripe-email',
+    from:'noreply@google.com',
+    subj:'Nuevo inicio de sesión en tu cuenta de Google',
+    body:'Se detectó un nuevo inicio de sesión en tu cuenta desde San José, Costa Rica, el día de hoy a las 10:34 a.m. desde Chrome en Windows. Si fuiste tú, no necesitas hacer nada.',
+    link: null, ans:'safe',
+    clues:['El dominio es google.com — oficial','No pide hacer clic ni ingresar datos','Solo es una notificación informativa'],
+    explain:'Email legítimo. Google notifica inicios de sesión desde noreply@google.com sin pedir clics ni datos.', xp:10 },
+  { type:'social', icon:'💬', lbl:'WHATSAPP', stripe:'stripe-social',
+    from:'Número desconocido (+1 305-xxx-xxxx)',
+    subj:'🎁 ¡Ganaste un iPhone 15!',
+    body:'¡Felicidades! Eres el ganador #1000 de nuestro sorteo. Reclama tu iPhone 15 GRATIS. Solo paga el envío de $9.99. Oferta válida por 2 horas.',
+    link:'sorteo-iphone-gratis.com/reclamar', ans:'phish',
+    clues:['Nadie regala iPhones a desconocidos','Urgencia falsa: solo 2 horas','"Solo paga el envío" es para capturar tu tarjeta'],
+    explain:'Scam de premio falso. El objetivo es robar datos de tu tarjeta con el cobro del "envío". Nunca participaste en ningún sorteo.', xp:10 },
+  { type:'web', icon:'🌐', lbl:'SITIO WEB', stripe:'stripe-web',
+    from:'https://www.hacienda.go.cr',
+    subj:'Portal ATV — Declaración de Renta 2024',
+    body:'Ministerio de Hacienda de Costa Rica. Ingrese con su firma digital o usuario y contraseña de ATV para presentar su declaración de renta.',
+    link:'https://www.hacienda.go.cr/ATV', ans:'safe',
+    clues:['El dominio .go.cr es exclusivo del Gobierno CR','HTTPS activo con dominio oficial','La URL coincide con el ministerio real'],
+    explain:'Sitio real del Ministerio de Hacienda. El dominio .go.cr solo puede usarlo el Gobierno de Costa Rica.', xp:10 },
+  { type:'email', icon:'📧', lbl:'EMAIL', stripe:'stripe-email',
+    from:'soporte@netflix-cr.com',
+    subj:'Problema con tu suscripción de Netflix',
+    body:'Tu pago mensual fue rechazado. Actualiza tu método de pago en las próximas 48 horas para no perder acceso a tu contenido favorito.',
+    link:'netflix-cr.com/actualizar-pago', ans:'phish',
+    clues:['Netflix usa @netflix.com, no @netflix-cr.com','El link va a netflix-cr.com, no netflix.com','Netflix no usa dominios con guion o región'],
+    explain:'El dominio "netflix-cr.com" es falso. Netflix siempre usa "netflix.com". Ataque para robar datos de tarjeta.', xp:10 },
+  { type:'sms', icon:'📱', lbl:'SMS', stripe:'stripe-sms',
+    from:'BACCR (remitente corporativo)',
+    subj:'Código de verificación BAC',
+    body:'Tu código de verificación BAC es: 847291. Válido por 5 minutos. Si no solicitaste este código, ignora este mensaje.',
+    link: null, ans:'safe',
+    clues:['Viene de remitente corporativo oficial','Solo entrega un código, no pide datos','Si no lo pediste, dice que lo ignores — legítimo'],
+    explain:'SMS legítimo. Los bancos envían códigos desde remitentes corporativos sin links. Solo úsalo si tú lo solicitaste.', xp:10 },
+  { type:'email', icon:'📧', lbl:'EMAIL', stripe:'stripe-email',
+    from:'rrhh-pagos@empresa.com',
+    subj:'Actualización urgente de cuenta IBAN para salario',
+    body:'Estimado colaborador, por disposición gerencial todos deben actualizar su cuenta IBAN para pago de salario. Responda este correo con su número IBAN antes del viernes.',
+    link: null, ans:'phish',
+    clues:['RRHH NUNCA pide datos bancarios por email','El cambio de cuenta es presencial con formulario','Ataque BEC — muy usado en empresas de CR'],
+    explain:'Ataque Business Email Compromise (BEC). Recursos Humanos nunca solicita IBANs por correo. Verifica siempre en persona.', xp:15 },
+];
+
+/* ═══════════════════════════════════════════════
+   ESTADO JUEGO
+═══════════════════════════════════════════════ */
+let G = { cards:[], idx:0, xp:0, ok:0, err:0, timer:null, t:100, hinted:false, answered:false, results:[] };
+
+function startGame() {
+  G = { cards:[...CARDS].sort(()=>Math.random()-0.5), idx:0, xp:0, ok:0, err:0, timer:null, t:100, hinted:false, answered:false, results:[] };
+  document.getElementById('result-host').classList.remove('on');
+  buildDots();
+  loadCard();
+}
+
+function replayGame() {
+  document.getElementById('result-host').classList.remove('on');
+  startGame();
+}
+
+function buildDots() {
+  const wrap = document.getElementById('pdots');
+  wrap.innerHTML = '';
+  G.cards.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (i===0?' curr':'');
+    d.id = 'pd'+i;
+    wrap.appendChild(d);
+  });
+}
+
+function loadCard() {
+  if (G.idx >= G.cards.length) { endGame(); return; }
+  const c = G.cards[G.idx];
+  G.answered = false; G.hinted = false;
+
+  document.getElementById('tc-stripe').className = 'tcard-stripe ' + c.stripe;
+  document.getElementById('tc-icon').textContent = c.icon;
+  document.getElementById('tc-lbl').textContent  = c.lbl;
+  document.getElementById('tc-from').textContent = c.from;
+  document.getElementById('tc-subj').textContent = c.subj;
+  document.getElementById('tc-body').textContent = c.body;
+  const lk = document.getElementById('tc-link');
+  if (c.link) { lk.style.display='inline-block'; lk.textContent=c.link; }
+  else { lk.style.display='none'; }
+  document.getElementById('tc-clues').classList.remove('on');
+  const hb = document.getElementById('hint-btn');
+  hb.textContent = '💡 Ver pista del experto (−5 XP)';
+  hb.disabled = false;
+
+  // XP/stats
+  document.getElementById('g-xp').textContent  = G.xp;
+  document.getElementById('g-ok').textContent  = G.ok;
+  document.getElementById('g-err').textContent = G.err;
+
+  // Reanimar carta
+  const tc = document.getElementById('tcard');
+  tc.style.animation = 'none';
+  requestAnimationFrame(() => { tc.style.animation = ''; });
+
+  // Dots
+  document.querySelectorAll('.pdot').forEach((d,i) => {
+    d.classList.remove('curr');
+    if (i === G.idx) d.classList.add('curr');
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(G.timer);
+  G.t = 100;
+  const fill = document.getElementById('t-fill');
+  fill.style.width = '100%';
+  fill.style.background = 'var(--cyan)';
+  G.timer = setInterval(() => {
+    G.t -= 1;
+    fill.style.width = G.t + '%';
+    if (G.t < 30) fill.style.background = 'var(--red)';
+    else if (G.t < 60) fill.style.background = 'var(--yellow)';
+    if (G.t <= 0) { clearInterval(G.timer); if (!G.answered) timeOut(); }
+  }, 80);
+}
+
+function timeOut() {
+  G.answered = true; G.err++;
+  G.results.push(false);
+  markDot(false);
+  showFeedback(false, G.cards[G.idx], true);
+}
+
+function answer(choice) {
+  if (G.answered) return;
+  G.answered = true;
+  clearInterval(G.timer);
+  const c = G.cards[G.idx];
+  const ok = choice === c.ans;
+  if (ok) { const earned = G.hinted ? Math.max(0, c.xp-5) : c.xp; G.xp += earned; G.ok++; }
+  else { G.err++; }
+  G.results.push(ok);
+  markDot(ok);
+  if (ok) spawnParticles();
+  showFeedback(ok, c, false);
+}
+
+function markDot(ok) {
+  const d = document.getElementById('pd'+G.idx);
+  if (d) { d.classList.remove('curr'); d.classList.add(ok?'ok':'err'); }
+}
+
+function useHint() {
+  if (G.hinted) return;
+  G.hinted = true;
+  G.xp = Math.max(0, G.xp - 5);
+  document.getElementById('g-xp').textContent = G.xp;
+  const c = G.cards[G.idx];
+  document.getElementById('clues-body').innerHTML = c.clues.map(cl=>`<div class="clue-row">${cl}</div>`).join('');
+  document.getElementById('tc-clues').classList.add('on');
+  const hb = document.getElementById('hint-btn');
+  hb.textContent = '💡 Pista activa'; hb.disabled = true;
+}
+
+function showFeedback(ok, c, timed) {
+  document.getElementById('fb-ico').textContent = ok ? '🎯' : (timed ? '⏱️' : '💥');
+  document.getElementById('fb-title').textContent = ok ? '¡AMENAZA DETECTADA!' : (timed ? 'TIEMPO AGOTADO' : '¡EL ATAQUE FUNCIONÓ!');
+  document.getElementById('fb-explain').textContent = c.explain;
+  const earned = ok ? (G.hinted ? Math.max(0,c.xp-5) : c.xp) : 0;
+  document.getElementById('fb-xp').textContent = ok ? '+'+earned+' XP' : '0 XP';
+  document.getElementById('fb-box').className = 'fb-box ' + (ok?'ok':'fail');
+  document.getElementById('fb-overlay').classList.add('on');
+}
+
+function nextCard() {
+  document.getElementById('fb-overlay').classList.remove('on');
+  G.idx++;
+  loadCard();
+}
+
+function endGame() {
+  const total = G.cards.length;
+  const acc = Math.round((G.ok/total)*100);
+  document.getElementById('r-xp').textContent  = G.xp;
+  document.getElementById('r-ok').textContent  = G.ok+'/'+total;
+  document.getElementById('r-acc').textContent = acc+'%';
+
+  let shield, title, sub, bico, bname;
+  if (acc===100) { shield='🛡️'; title='AGENTE ÉLITE'; sub='PRECISIÓN PERFECTA — NINGÚN ATAQUE PASÓ'; bico='🏆'; bname='ESCUDO PERFECTO'; }
+  else if (acc>=75) { shield='🛡️'; title='MISIÓN EXITOSA'; sub='TU ESCUDO RESISTIÓ LA MAYORÍA DE ATAQUES'; bico='🥇'; bname='GUARDIÁN DIGITAL'; }
+  else if (acc>=50) { shield='⚔️'; title='EN ENTRENAMIENTO'; sub='SIGUE PRACTICANDO — VAS POR BUEN CAMINO'; bico='🥈'; bname='PRIMERA DEFENSA'; }
+  else { shield='🔰'; title='LOS HACKERS GANARON'; sub='PERO AHORA SABES MÁS QUE ANTES'; bico='🎖️'; bname='APRENDIZ CYBER'; }
+
+  document.getElementById('r-shield').textContent = shield;
+  document.getElementById('r-title').textContent  = title;
+  document.getElementById('r-sub').textContent    = sub;
+  document.getElementById('r-bico').textContent   = bico;
+  document.getElementById('r-bname').textContent  = bname;
+
+  // Marcar módulo completado
+  if (!player.completed.includes(1)) player.completed.push(1);
+  player.xp += G.xp;
+
+  if (acc===100) spawnParticles();
+  document.getElementById('result-host').classList.add('on');
+}
+
+/* ═══════════════════════════════════════════════
+   PARTÍCULAS
+═══════════════════════════════════════════════ */
+function spawnParticles() {
+  const cv = document.getElementById('ptcl');
+  const ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const pts = Array.from({length:70}, () => ({
+    x: Math.random()*cv.width, y: cv.height+10,
+    vx:(Math.random()-0.5)*5, vy:-(Math.random()*7+3),
+    r: Math.random()*5+2,
+    c:['#00ff88','#00e5ff','#ffd60a','#bf5af2'][Math.floor(Math.random()*4)],
+    a:1
+  }));
+  let raf;
+  (function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    let alive=false;
+    pts.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.18; p.a-=0.014;
+      if (p.a>0) { alive=true; ctx.globalAlpha=p.a; ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }
+    });
+    ctx.globalAlpha=1;
+    if (alive) raf=requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* INIT */
+buildAvatars();
+</script>
+</body>
+</html>
