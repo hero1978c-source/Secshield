@@ -772,6 +772,8 @@ function show(id){
 
 function goMap(){
   clearAllTimers();
+  document.getElementById('res-host').classList.remove('on');
+  document.getElementById('fb-ov').classList.remove('on');
   buildMap();
   show('sm');
 }
