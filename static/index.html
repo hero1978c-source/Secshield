@@ -3,504 +3,476 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CyberShield</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>CyberShield — Entrenamiento Cyber</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-/* ═══ VARIABLES ═══ */
-:root {
-  --bg:     #060a10;
-  --surf:   #0b1220;
-  --card:   #0f1a2e;
-  --bord:   #1a3050;
-  --cyan:   #00e5ff;
-  --green:  #00ff88;
-  --red:    #ff2d55;
-  --yel:    #ffd60a;
-  --purp:   #bf5af2;
-  --ora:    #ff9500;
-  --text:   #c8d8f0;
-  --muted:  #3a5570;
-  --white:  #eaf4ff;
+:root{
+  --bg:#070b14;--surface:#0d1525;--card:#111c30;--border:#1e3a5f;
+  --cyan:#00e5ff;--green:#00ff88;--red:#ff2d55;--yellow:#ffd60a;
+  --purple:#bf5af2;--ora:#ff9500;--yel:#ffd60a;
+  --text:#c8daf0;--muted:#4a6a8a;--white:#f0f8ff;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
-body{font-family:'Rajdhani',sans-serif;font-size:17px;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
+  background-image:radial-gradient(ellipse 800px 500px at 50% 0%,rgba(0,229,255,0.06) 0%,transparent 60%),
+  linear-gradient(rgba(0,229,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.015) 1px,transparent 1px);
+  background-size:auto,50px 50px,50px 50px;}
 
-/* ═══ BG ═══ */
-.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:48px 48px;}
-.bg-g1{position:absolute;width:700px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.07) 0%,transparent 70%);top:-180px;left:50%;transform:translateX(-50%);animation:gdrift 8s ease-in-out infinite alternate;}
-.bg-g2{position:absolute;width:450px;height:350px;border-radius:50%;background:radial-gradient(ellipse,rgba(191,90,242,0.05) 0%,transparent 70%);bottom:0;right:0;animation:gdrift 11s ease-in-out infinite alternate-reverse;}
-@keyframes gdrift{from{transform:translateX(-50%) scale(1);}to{transform:translateX(-50%) scale(1.2);}}
-.scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
 
-/* ═══ SCREENS ═══ */
-.sc{position:fixed;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.45s ease;overflow-y:auto;}
-.sc.on{opacity:1;pointer-events:all;}
+/* ── INTRO ── */
+#si{align-items:center;justify-content:center;padding:40px 24px;text-align:center;}
+.logo-ring{width:120px;height:120px;border-radius:50%;border:2px solid var(--cyan);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 28px;
+  animation:pulse-ring 2s infinite;box-shadow:0 0 30px rgba(0,229,255,0.3),inset 0 0 30px rgba(0,229,255,0.05);}
+.logo-ring::before{content:'';position:absolute;border-radius:50%;border:1px solid rgba(0,229,255,0.3);}
+@keyframes pulse-ring{0%,100%{box-shadow:0 0 30px rgba(0,229,255,0.3)}50%{box-shadow:0 0 60px rgba(0,229,255,0.5)}}
+.logo-ico{font-size:52px;}
+.logo-title{font-family:'Orbitron',monospace;font-size:38px;font-weight:900;color:var(--white);
+  text-shadow:0 0 40px rgba(0,229,255,0.6);letter-spacing:4px;margin-bottom:6px;}
+.logo-sub{font-size:14px;letter-spacing:6px;color:var(--cyan);margin-bottom:28px;}
+.epic-quote{background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2);
+  border-radius:12px;padding:20px 28px;font-size:17px;line-height:1.7;max-width:520px;
+  margin:0 auto 36px;color:var(--text);}
+.epic-quote strong{color:var(--cyan);}
+.btn-primary{background:linear-gradient(135deg,rgba(0,229,255,0.2),rgba(0,229,255,0.05));
+  border:1.5px solid var(--cyan);color:var(--cyan);font-family:'Rajdhani',sans-serif;
+  font-size:17px;font-weight:700;letter-spacing:3px;padding:14px 40px;border-radius:8px;
+  cursor:pointer;transition:.2s;text-transform:uppercase;}
+.btn-primary:hover{background:rgba(0,229,255,0.15);box-shadow:0 0 20px rgba(0,229,255,0.3);}
 
-/* ═══════════════════════════════
-   S1 — BIENVENIDA
-═══════════════════════════════ */
-#sw{align-items:center;justify-content:center;padding:36px 24px;text-align:center;}
-.wi{position:relative;z-index:1;max-width:620px;width:100%;}
+/* ── SETUP ── */
+#ss{align-items:center;justify-content:center;padding:40px 24px;}
+.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;
+  max-width:480px;width:100%;text-align:center;}
+.setup-title{font-family:'Orbitron',monospace;font-size:20px;color:var(--cyan);margin-bottom:24px;letter-spacing:2px;}
+.name-inp{width:100%;background:rgba(0,229,255,0.05);border:1.5px solid var(--border);
+  border-radius:8px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:20px;
+  padding:12px 16px;text-align:center;margin-bottom:24px;outline:none;}
+.name-inp:focus{border-color:var(--cyan);}
+.av-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px;}
+.av-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;
+  padding:10px 6px;cursor:pointer;transition:.2s;text-align:center;}
+.av-btn:hover{border-color:var(--cyan);}
+.av-btn.sel{border-color:var(--cyan);background:rgba(0,229,255,0.15);}
+.av-btn .av-e{font-size:26px;display:block;}
+.av-btn .av-n{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;letter-spacing:1px;}
 
-.sh-wrap{position:relative;width:120px;height:120px;margin:0 auto 30px;}
-.sh-r{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--cyan);opacity:0.5;animation:rspin 12s linear infinite;}
-.sh-r::before{content:'';position:absolute;width:10px;height:10px;background:var(--cyan);border-radius:50%;top:-5px;left:50%;transform:translateX(-50%);box-shadow:0 0 12px var(--cyan);}
-.sh-r2{position:absolute;inset:14px;border-radius:50%;border:1px dashed rgba(0,229,255,0.2);animation:rspin 8s linear infinite reverse;}
-@keyframes rspin{to{transform:rotate(360deg);}}
-.sh-ico{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:50px;animation:sbr 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(0,229,255,0.6));}
-@keyframes sbr{0%,100%{filter:drop-shadow(0 0 15px rgba(0,229,255,0.5));}50%{filter:drop-shadow(0 0 35px rgba(0,229,255,0.9));}}
+/* ── MAP ── */
+#sm{padding:24px 16px 40px;}
+.map-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.map-agent{display:flex;align-items:center;gap:14px;}
+.map-av{font-size:36px;}
+.map-name{font-family:'Orbitron',monospace;font-size:16px;color:var(--white);}
+.map-xp{font-size:13px;color:var(--cyan);}
+.map-title{font-family:'Orbitron',monospace;font-size:22px;color:var(--cyan);
+  text-align:center;margin-bottom:24px;letter-spacing:2px;}
+.mod-list{display:flex;flex-direction:column;gap:14px;max-width:600px;margin:0 auto;}
+.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:20px;display:flex;align-items:center;gap:18px;transition:.2s;}
+.mod-card.active{cursor:pointer;border-color:rgba(0,229,255,0.4);}
+.mod-card.active:hover{border-color:var(--cyan);background:rgba(0,229,255,0.06);}
+.mod-card.locked{opacity:.5;}
+.mod-ico-w{font-size:36px;min-width:44px;text-align:center;}
+.mod-info{flex:1;}
+.mod-num{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:2px;margin-bottom:2px;}
+.mod-name{font-family:'Orbitron',monospace;font-size:16px;color:var(--white);margin-bottom:4px;}
+.mod-desc{font-size:14px;color:var(--muted);}
+.mod-r{text-align:right;}
+.mod-xp{font-size:13px;color:var(--yellow);font-weight:700;margin-bottom:6px;}
+.mod-st{font-size:12px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:20px;}
+.st-open{background:rgba(0,229,255,0.15);color:var(--cyan);}
+.st-lock{background:rgba(74,106,138,0.2);color:var(--muted);}
+.st-done{background:rgba(0,255,136,0.15);color:var(--green);}
+.map-stats-btn{background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;padding:8px 18px;
+  border-radius:8px;cursor:pointer;letter-spacing:2px;transition:.2s;}
+.map-stats-btn:hover{border-color:var(--cyan);color:var(--cyan);}
 
-.cs-logo{font-family:'Orbitron',monospace;font-size:clamp(40px,10vw,68px);font-weight:900;color:var(--white);letter-spacing:3px;line-height:1;text-shadow:0 0 40px rgba(0,229,255,0.3);animation:fup 0.8s ease both;}
-.cs-logo em{font-style:normal;color:var(--cyan);}
-.cs-tag{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--cyan);letter-spacing:5px;text-transform:uppercase;margin:12px 0 0;opacity:0.75;animation:fup 0.8s 0.1s ease both;}
+/* ── GAME SCREEN ── */
+#sg{flex-direction:column;}
+.g-top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+  border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.g-ttl{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan);letter-spacing:1px;flex:1;}
+.g-stats{display:flex;gap:16px;}
+.gstat{font-size:14px;font-weight:700;}
+.gstat span{color:var(--muted);font-weight:400;}
+.g-back{background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:'Rajdhani',sans-serif;font-size:13px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:.2s;}
+.g-back:hover{border-color:var(--red);color:var(--red);}
 
-.epic{margin:28px auto;padding:26px 30px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.15);border-left:3px solid var(--cyan);border-radius:3px;animation:fup 0.8s 0.2s ease both;}
-.epic-q{font-size:clamp(18px,3.5vw,22px);font-weight:600;color:var(--white);line-height:1.6;margin-bottom:10px;}
-.epic-q strong{color:var(--cyan);}
-.epic-src{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.t-bar{height:4px;background:var(--border);}
+.t-fill{height:100%;background:var(--cyan);transition:width .38s linear,background .3s;}
 
-.qstats{display:flex;gap:16px;justify-content:center;margin-bottom:36px;flex-wrap:wrap;animation:fup 0.8s 0.3s ease both;}
-.qs{display:flex;align-items:center;gap:7px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);}
-.qsdot{width:7px;height:7px;border-radius:50%;}
+.pdots{display:flex;gap:6px;padding:14px 18px 0;justify-content:center;flex-wrap:wrap;}
+.pd{width:14px;height:14px;border-radius:50%;background:var(--border);transition:.3s;}
+.pd.cur{background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+.pd.ok{background:var(--green);}
+.pd.fail{background:var(--red);}
 
-.btn-cta{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;letter-spacing:4px;padding:20px 56px;background:transparent;border:2px solid var(--cyan);color:var(--cyan);border-radius:2px;cursor:pointer;position:relative;overflow:hidden;transition:color 0.3s;text-transform:uppercase;animation:fup 0.8s 0.4s ease both;}
-.btn-cta::before{content:'';position:absolute;inset:0;background:var(--cyan);transform:translateX(-100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
-.btn-cta:hover::before{transform:translateX(0);}
-.btn-cta:hover{color:var(--bg);}
-.btn-cta span{position:relative;z-index:1;}
-@keyframes fup{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
-
-/* ═══════════════════════════════
-   S2 — AGENTE
-═══════════════════════════════ */
-#sa{align-items:center;justify-content:flex-start;padding:0;}
-.a-hdr{position:relative;z-index:1;width:100%;background:var(--surf);border-bottom:1px solid var(--bord);padding:18px 26px;display:flex;align-items:center;gap:12px;}
-.a-hdr-logo{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--cyan);letter-spacing:2px;}
-.a-hdr-step{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;}
-.a-body{position:relative;z-index:1;width:100%;max-width:660px;margin:0 auto;padding:30px 26px 50px;display:flex;flex-direction:column;gap:30px;}
-.sec-ttl{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--cyan);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-.sec-ttl::after{content:'';flex:1;height:1px;background:var(--bord);}
-
-.ni-wrap{position:relative;}
-.ni{width:100%;background:var(--card);border:1px solid var(--bord);border-radius:3px;padding:16px 20px 16px 52px;font-family:'Orbitron',monospace;font-size:18px;color:var(--white);outline:none;transition:border-color 0.3s,box-shadow 0.3s;letter-spacing:2px;}
-.ni::placeholder{color:var(--muted);font-size:14px;letter-spacing:1px;}
-.ni:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,0.08),0 0 20px rgba(0,229,255,0.1);}
-.ni-ico{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;}
-.ni-cnt{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);text-align:right;margin-top:7px;letter-spacing:1px;}
-
-.av-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;}
-.av-btn{aspect-ratio:1;background:var(--card);border:2px solid var(--bord);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;padding:10px 4px;}
-.av-btn::before{content:'';position:absolute;inset:0;background:var(--cyan);opacity:0;transition:opacity 0.2s;}
-.av-btn:hover{border-color:var(--cyan);transform:translateY(-3px);}
-.av-btn:hover::before{opacity:0.06;}
-.av-btn.sel{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,229,255,0.25),inset 0 0 20px rgba(0,229,255,0.05);}
-.av-btn.sel::after{content:'✓';position:absolute;top:4px;right:6px;font-size:10px;color:var(--cyan);font-family:'Share Tech Mono',monospace;}
-.av-em{font-size:clamp(24px,5vw,32px);position:relative;z-index:1;}
-.av-nm{font-family:'Share Tech Mono',monospace;font-size:clamp(8px,1.5vw,10px);color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;text-align:center;position:relative;z-index:1;line-height:1.2;}
-.av-btn.sel .av-nm{color:var(--cyan);}
-
-.btn-conf{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;letter-spacing:3px;padding:18px;width:100%;background:var(--cyan);color:var(--bg);border:none;border-radius:3px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;opacity:0.35;pointer-events:none;}
-.btn-conf.rdy{opacity:1;pointer-events:all;}
-.btn-conf.rdy:hover{box-shadow:0 0 30px rgba(0,229,255,0.4);transform:translateY(-2px);}
-
-/* ═══════════════════════════════
-   S3 — MAPA
-═══════════════════════════════ */
-#sm{align-items:stretch;justify-content:flex-start;}
-.m-hdr{position:relative;z-index:1;background:var(--surf);border-bottom:1px solid var(--bord);padding:16px 26px;display:flex;align-items:center;gap:16px;flex-shrink:0;flex-wrap:wrap;}
-.m-logo{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--cyan);letter-spacing:2px;}
-.pb{display:flex;align-items:center;gap:10px;margin-left:auto;background:var(--card);border:1px solid var(--bord);border-radius:3px;padding:8px 16px 8px 12px;}
-.pb-av{font-size:22px;}
-.pb-nm{font-family:'Orbitron',monospace;font-size:13px;color:var(--white);letter-spacing:1px;}
-.pb-xp{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--yel);letter-spacing:1px;}
-.btn-stats{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);background:transparent;border:1px solid var(--bord);border-radius:2px;padding:8px 14px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
-.btn-stats:hover{color:var(--cyan);border-color:var(--cyan);}
-.m-body{position:relative;z-index:1;flex:1;padding:30px 26px 50px;overflow-y:auto;max-width:740px;margin:0 auto;width:100%;}
-.m-heading{font-family:'Orbitron',monospace;font-size:clamp(20px,4vw,28px);font-weight:900;color:var(--white);margin-bottom:8px;}
-.m-sub{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:30px;}
-.mod-list{display:flex;flex-direction:column;gap:13px;}
-.mod-card{background:var(--card);border:1px solid var(--bord);border-radius:5px;padding:22px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;transition:all 0.25s;}
-.mod-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
-.mod-card.open{cursor:pointer;border-color:rgba(0,229,255,0.3);}
-.mod-card.open::before{background:var(--cyan);}
-.mod-card.open:hover{border-color:var(--cyan);transform:translateX(5px);box-shadow:-4px 0 20px rgba(0,229,255,0.1);}
-.mod-card.done{border-color:rgba(0,255,136,0.2);}
-.mod-card.done::before{background:var(--green);}
-.mod-card.lock{opacity:0.4;cursor:not-allowed;filter:grayscale(0.4);}
-.mod-card.lock::before{background:var(--muted);}
-.mod-ico-w{flex-shrink:0;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--bord);background:var(--surf);}
-.mod-card.open .mod-ico-w{border-color:rgba(0,229,255,0.3);box-shadow:0 0 16px rgba(0,229,255,0.15);}
-.mod-card.done .mod-ico-w{border-color:rgba(0,255,136,0.3);}
-.mod-info{flex:1;min-width:0;}
-.mod-num{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
-.mod-name{font-family:'Orbitron',monospace;font-size:clamp(14px,3vw,17px);font-weight:700;color:var(--white);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mod-card.open .mod-name{color:var(--cyan);}
-.mod-card.done .mod-name{color:var(--green);}
-.mod-desc{font-size:14px;color:var(--muted);line-height:1.4;}
-.mod-r{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:7px;}
-.mod-xp{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--yel);letter-spacing:1px;}
-.mod-st{font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 12px;border-radius:2px;letter-spacing:1px;text-transform:uppercase;}
-.st-open{background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid rgba(0,229,255,0.3);}
-.st-lock{background:rgba(58,85,112,0.2);color:var(--muted);border:1px solid var(--bord);}
-.st-done{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3);}
-
-/* ═══════════════════════════════
-   S4 — STATS
-═══════════════════════════════ */
-#ss{align-items:stretch;justify-content:flex-start;}
-.stats-hdr{position:relative;z-index:1;background:var(--surf);border-bottom:1px solid var(--bord);padding:16px 26px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
-.stats-hdr-logo{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--cyan);letter-spacing:2px;}
-.btn-back-sm{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);background:transparent;border:1px solid var(--bord);border-radius:2px;padding:8px 14px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;margin-left:auto;}
-.btn-back-sm:hover{color:var(--cyan);border-color:var(--cyan);}
-.stats-body{position:relative;z-index:1;flex:1;padding:30px 26px 50px;overflow-y:auto;max-width:740px;margin:0 auto;width:100%;}
-.stats-player{display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--bord);border-radius:5px;padding:22px;margin-bottom:24px;}
-.sp-av{font-size:52px;}
-.sp-info{}
-.sp-name{font-family:'Orbitron',monospace;font-size:clamp(20px,4vw,26px);font-weight:900;color:var(--white);margin-bottom:4px;}
-.sp-title{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;}
-.sp-xp{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:var(--yel);margin-left:auto;text-shadow:0 0 20px rgba(255,214,10,0.4);}
-.sp-xp-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-align:right;}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
-@media(max-width:500px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
-.sg{background:var(--card);border:1px solid var(--bord);border-radius:4px;padding:18px;text-align:center;}
-.sg-val{font-family:'Orbitron',monospace;font-size:30px;font-weight:900;line-height:1;margin-bottom:6px;}
-.sg-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.hist-ttl{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--cyan);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-.hist-ttl::after{content:'';flex:1;height:1px;background:var(--bord);}
-.hist-empty{text-align:center;padding:32px;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:2px;}
-.hist-item{background:var(--card);border:1px solid var(--bord);border-radius:4px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:10px;}
-.hi-mod{font-size:22px;}
-.hi-info{flex:1;}
-.hi-name{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--white);margin-bottom:3px;}
-.hi-date{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
-.hi-right{text-align:right;}
-.hi-acc{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;}
-.hi-xp{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--yel);}
-
-/* ═══════════════════════════════
-   S5 — JUEGO
-═══════════════════════════════ */
-#sg{align-items:stretch;justify-content:flex-start;}
-.g-host{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;}
-.g-top{background:var(--surf);border-bottom:1px solid var(--bord);padding:14px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0;}
-.btn-bk{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--bord);border-radius:2px;padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
-.btn-bk:hover{color:var(--cyan);border-color:var(--cyan);}
-.g-ttl{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan);letter-spacing:2px;}
-.g-stats{margin-left:auto;display:flex;gap:18px;align-items:center;}
-.gst{display:flex;flex-direction:column;align-items:center;}
-.gst-l{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;}
-.gst-v{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--white);line-height:1;}
-.gst-v.cy{color:var(--yel);}
-.gst-v.gr{color:var(--green);}
-.gst-v.rd{color:var(--red);}
-.t-strip{padding:0 22px;background:var(--surf);border-bottom:1px solid var(--bord);flex-shrink:0;}
-.t-bg{height:4px;background:var(--bord);}
-.t-fill{height:100%;background:var(--cyan);transition:width 0.08s linear,background 0.3s;box-shadow:0 0 8px var(--cyan);}
-.pdots{display:flex;gap:9px;justify-content:center;padding:14px 22px;flex-shrink:0;}
-.pd{width:11px;height:11px;border-radius:50%;border:1px solid var(--muted);background:transparent;transition:all 0.3s;}
-.pd.cur{border-color:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pdp 1s infinite;}
-.pd.ok{background:var(--green);border-color:var(--green);box-shadow:0 0 6px var(--green);}
-.pd.er{background:var(--red);border-color:var(--red);box-shadow:0 0 6px var(--red);}
-@keyframes pdp{50%{box-shadow:0 0 16px var(--cyan);}}
-
-/* TARJETA MÓDULO 1 */
-.czone{flex:1;display:flex;align-items:center;justify-content:center;padding:18px 22px;overflow-y:auto;}
-.tcard{max-width:520px;width:100%;background:var(--card);border:1px solid var(--bord);border-radius:5px;overflow:hidden;animation:cap 0.4s cubic-bezier(0.34,1.56,0.64,1);}
-@keyframes cap{from{opacity:0;transform:scale(0.88) translateY(18px);}to{opacity:1;transform:scale(1) translateY(0);}}
-.tc-stripe{height:4px;}
-.s-email{background:var(--purp);}
-.s-sms{background:var(--green);}
-.s-web{background:var(--yel);}
-.s-social{background:var(--ora);}
-.tc-hd{padding:16px 20px 12px;border-bottom:1px solid var(--bord);display:flex;align-items:center;gap:14px;}
-.tc-ico{font-size:24px;}
-.tc-type{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:2px;}
-.tc-from{font-size:15px;font-weight:600;color:var(--white);}
-.tc-body{padding:20px;}
-.tc-subj{font-size:17px;font-weight:700;color:var(--white);margin-bottom:12px;}
-.tc-cont{font-size:15px;line-height:1.75;color:var(--text);margin-bottom:14px;}
-.tc-link{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:12px;padding:6px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--bord);border-radius:2px;color:var(--cyan);word-break:break-all;}
-.tc-clues{margin-top:14px;padding:12px 14px;background:rgba(0,0,0,0.2);border-radius:3px;display:none;}
+/* ── CARD ZONE (Módulo 1) ── */
+#czone{display:none;flex-direction:column;flex:1;padding:18px;}
+.tc-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;flex:1;
+  display:flex;flex-direction:column;overflow:hidden;margin-bottom:14px;}
+.tc-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
+.tc-ico{font-size:26px;margin-top:2px;}
+.tc-from{font-size:13px;color:var(--muted);margin-bottom:2px;}
+.tc-subj{font-size:16px;font-weight:700;color:var(--white);}
+.tc-body{padding:14px 18px;flex:1;font-size:17px;line-height:1.6;overflow-y:auto;}
+.tc-link{display:inline-block;margin-top:10px;font-size:14px;color:var(--red);
+  font-family:'Share Tech Mono',monospace;background:rgba(255,45,85,0.08);
+  padding:4px 10px;border-radius:6px;border:1px solid rgba(255,45,85,0.3);}
+.tc-clues{border-top:1px solid var(--border);padding:12px 18px;display:none;}
 .tc-clues.on{display:block;}
-.cl-hd{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--yel);letter-spacing:2px;margin-bottom:9px;}
-.cl-row{font-size:13px;color:var(--text);padding:3px 0;display:flex;gap:8px;}
-.cl-row::before{content:'→';color:var(--yel);flex-shrink:0;}
+.tc-clue-ttl{font-size:11px;color:var(--yellow);font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.cl-row{font-size:14px;color:var(--text);padding:4px 0;padding-left:12px;border-left:2px solid var(--yellow);}
+.cl-row+.cl-row{margin-top:6px;}
+#act-zone{display:none;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 18px;}
+.act-btn{border:1.5px solid;border-radius:10px;padding:16px;font-family:'Rajdhani',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:.2s;text-transform:uppercase;}
+.act-phish{background:rgba(255,45,85,0.1);border-color:var(--red);color:var(--red);}
+.act-phish:hover{background:rgba(255,45,85,0.2);box-shadow:0 0 16px rgba(255,45,85,0.3);}
+.act-safe{background:rgba(0,255,136,0.1);border-color:var(--green);color:var(--green);}
+.act-safe:hover{background:rgba(0,255,136,0.2);box-shadow:0 0 16px rgba(0,255,136,0.3);}
+.hint-btn{display:block;width:100%;margin:0 18px 18px;width:calc(100% - 36px);
+  background:transparent;border:1px solid var(--border);color:var(--yellow);
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;padding:10px;
+  border-radius:8px;cursor:pointer;letter-spacing:2px;transition:.2s;}
+.hint-btn:hover{border-color:var(--yellow);background:rgba(255,214,10,0.08);}
+.hint-btn:disabled{opacity:.4;cursor:default;}
 
-/* MÓDULO 2 — FORGE */
-.forge-zone{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 22px;overflow-y:auto;}
-.forge-card{max-width:540px;width:100%;background:var(--card);border:1px solid var(--bord);border-radius:5px;overflow:hidden;animation:cap 0.4s cubic-bezier(0.34,1.56,0.64,1);}
-.forge-stripe{height:4px;background:linear-gradient(90deg,var(--green),var(--cyan));}
-.forge-hd{padding:18px 22px 14px;border-bottom:1px solid var(--bord);}
-.forge-scenario{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
-.forge-q{font-size:17px;font-weight:700;color:var(--white);line-height:1.4;}
-.forge-body{padding:20px 22px;}
-.forge-pw-display{font-family:'Share Tech Mono',monospace;font-size:clamp(16px,3vw,22px);color:var(--green);background:rgba(0,0,0,0.3);border:1px solid var(--bord);border-radius:3px;padding:14px 18px;margin-bottom:16px;min-height:56px;display:flex;align-items:center;letter-spacing:3px;word-break:break-all;transition:all 0.2s;text-shadow:0 0 10px rgba(0,255,136,0.4);}
-.forge-pw-display.weak{color:var(--red);text-shadow:0 0 10px rgba(255,45,85,0.4);}
-.forge-pw-display.medium{color:var(--yel);text-shadow:0 0 10px rgba(255,214,10,0.4);}
-.strength-bar-wrap{margin-bottom:16px;}
-.strength-label{display:flex;justify-content:space-between;margin-bottom:6px;}
-.sl-text{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;}
-.sl-val{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;transition:color 0.3s;}
-.str-bg{height:8px;background:var(--bord);border-radius:4px;overflow:hidden;}
-.str-fill{height:100%;border-radius:4px;transition:width 0.4s,background 0.4s;box-shadow:0 0 8px currentColor;}
-.ingr-ttl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
-.ingr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:16px;}
-.ingr-btn{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;padding:12px 10px;border-radius:3px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;text-align:left;letter-spacing:1px;}
-.ingr-btn.inactive{background:var(--surf);border:1px solid var(--bord);color:var(--muted);}
-.ingr-btn.active{border:1px solid;transform:scale(1.02);}
-.ingr-btn.active-abc{background:rgba(0,229,255,0.1);border-color:var(--cyan);color:var(--cyan);}
-.ingr-btn.active-num{background:rgba(0,255,136,0.1);border-color:var(--green);color:var(--green);}
-.ingr-btn.active-sym{background:rgba(255,214,10,0.1);border-color:var(--yel);color:var(--yel);}
-.ingr-btn.active-len{background:rgba(191,90,242,0.1);border-color:var(--purp);color:var(--purp);}
-.ingr-ico{font-size:18px;}
-.forge-submit{width:100%;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;letter-spacing:3px;padding:16px;background:var(--green);color:var(--bg);border:none;border-radius:3px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.forge-submit:hover{box-shadow:0 0 24px rgba(0,255,136,0.35);transform:translateY(-2px);}
-.forge-submit:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none;}
+/* ══════════════════════════════════════════
+   MÓDULO 2 — INSPECTOR DE CONTRASEÑAS
+══════════════════════════════════════════ */
+#izone{display:none;flex-direction:column;flex:1;padding:16px;}
 
-/* ACCIONES MÓDULO 1 */
-.act-zone{padding:0 22px 20px;display:grid;grid-template-columns:1fr 1fr;gap:11px;max-width:520px;margin:0 auto;width:100%;flex-shrink:0;}
-.abtn{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:2px;padding:16px 8px;border:2px solid;border-radius:4px;cursor:pointer;background:transparent;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all 0.2s;text-transform:uppercase;}
-.abtn .ai{font-size:26px;}
-.abtn-safe{border-color:var(--green);color:var(--green);}
-.abtn-phish{border-color:var(--red);color:var(--red);}
-.abtn-safe:hover{background:rgba(0,255,136,0.1);transform:translateY(-2px);box-shadow:0 0 18px rgba(0,255,136,0.2);}
-.abtn-phish:hover{background:rgba(255,45,85,0.1);transform:translateY(-2px);box-shadow:0 0 18px rgba(255,45,85,0.2);}
-.hint-btn{grid-column:1/-1;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);background:transparent;border:1px dashed var(--bord);border-radius:2px;padding:9px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
-.hint-btn:hover{color:var(--yel);border-color:var(--yel);}
+.insp-pw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:18px 20px;margin-bottom:14px;text-align:center;}
+.insp-context{font-size:12px;color:var(--muted);letter-spacing:2px;font-weight:700;margin-bottom:8px;}
+.insp-scenario{font-size:16px;color:var(--white);font-weight:700;margin-bottom:16px;}
+.insp-pw-label{font-size:12px;color:var(--cyan);letter-spacing:2px;margin-bottom:8px;}
+.insp-pw{font-family:'Share Tech Mono',monospace;font-size:22px;color:var(--white);
+  background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;
+  padding:12px 20px;display:inline-block;letter-spacing:2px;word-break:break-all;}
 
-/* FEEDBACK */
-.fb-ov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
-.fb-ov.on{opacity:1;pointer-events:all;}
-.fb-ov::before{content:'';position:absolute;inset:0;background:rgba(6,10,16,0.9);backdrop-filter:blur(5px);}
-.fb-box{position:relative;max-width:400px;width:100%;border-radius:5px;padding:30px 26px;text-align:center;border:2px solid;animation:fbp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
-@keyframes fbp{from{transform:scale(0.65);}to{transform:scale(1);}}
-.fb-box.ok{background:#041209;border-color:var(--green);box-shadow:0 0 50px rgba(0,255,136,0.15);}
-.fb-box.fail{background:#120407;border-color:var(--red);box-shadow:0 0 50px rgba(255,45,85,0.15);}
-.fb-ico{font-size:52px;margin-bottom:12px;display:block;}
-.fb-ttl{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;margin-bottom:10px;}
+.phase-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,255,0.1);
+  border:1px solid rgba(0,229,255,0.3);border-radius:20px;padding:4px 14px;
+  font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:2px;margin-bottom:12px;}
+
+.insp-question{font-size:17px;color:var(--white);font-weight:600;margin-bottom:14px;text-align:center;}
+
+/* Fase 1 — Clasificar */
+#phase1-zone{display:none;flex-direction:column;}
+.classify-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.cls-btn{border:1.5px solid;border-radius:10px;padding:14px 8px;font-family:'Rajdhani',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:.2s;text-align:center;text-transform:uppercase;}
+.cls-btn .cls-ico{font-size:24px;display:block;margin-bottom:6px;}
+.cls-weak{background:rgba(255,45,85,0.1);border-color:var(--red);color:var(--red);}
+.cls-weak:hover{background:rgba(255,45,85,0.2);}
+.cls-strong{background:rgba(0,255,136,0.1);border-color:var(--green);color:var(--green);}
+.cls-strong:hover{background:rgba(0,255,136,0.2);}
+.cls-trap{background:rgba(255,149,0,0.1);border-color:var(--ora);color:var(--ora);}
+.cls-trap:hover{background:rgba(255,149,0,0.2);}
+
+/* Fase 2 — Diagnosticar */
+#phase2-zone{display:none;flex-direction:column;}
+.diag-options{display:flex;flex-direction:column;gap:8px;}
+.diag-btn{background:rgba(255,255,255,0.03);border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 16px;text-align:left;font-family:'Rajdhani',sans-serif;font-size:16px;
+  color:var(--text);cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;}
+.diag-btn:hover{border-color:var(--cyan);color:var(--white);}
+.diag-btn .diag-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;}
+
+/* Fase 3 — Mejorar */
+#phase3-zone{display:none;flex-direction:column;}
+.improve-options{display:flex;flex-direction:column;gap:8px;}
+.impr-btn{background:rgba(255,255,255,0.03);border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 16px;cursor:pointer;transition:.2s;font-family:'Rajdhani',sans-serif;}
+.impr-btn:hover{border-color:var(--cyan);}
+.impr-pw{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--white);
+  display:block;margin-bottom:4px;word-break:break-all;}
+.impr-hint{font-size:13px;color:var(--muted);}
+
+/* Mini retroalimentación de fase */
+.phase-fb{padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;
+  margin-bottom:10px;display:none;align-items:center;gap:8px;}
+.phase-fb.show{display:flex;}
+.phase-fb.ok{background:rgba(0,255,136,0.12);border:1px solid rgba(0,255,136,0.3);color:var(--green);}
+.phase-fb.fail{background:rgba(255,45,85,0.12);border:1px solid rgba(255,45,85,0.3);color:var(--red);}
+
+/* XP mini display */
+.phase-xp-row{display:flex;gap:8px;justify-content:center;margin-bottom:10px;}
+.phase-xp-pip{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:3px 12px;font-size:13px;font-weight:700;}
+.phase-xp-pip.earned{background:rgba(255,214,10,0.15);border-color:var(--yellow);color:var(--yellow);}
+
+/* Botón siguiente fase */
+.btn-next-phase{width:100%;background:rgba(0,229,255,0.1);border:1.5px solid var(--cyan);
+  color:var(--cyan);font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;padding:12px;border-radius:8px;cursor:pointer;transition:.2s;
+  text-transform:uppercase;margin-top:10px;display:none;}
+.btn-next-phase:hover{background:rgba(0,229,255,0.2);}
+.btn-next-phase.show{display:block;}
+
+/* ── FEEDBACK OVERLAY ── */
+#fb-ov{position:fixed;inset:0;background:rgba(7,11,20,0.92);display:none;
+  align-items:center;justify-content:center;z-index:50;padding:24px;}
+#fb-ov.on{display:flex;}
+.fb-box{background:var(--surface);border-radius:16px;padding:32px 28px;max-width:440px;
+  width:100%;text-align:center;border:1.5px solid;}
+.fb-box.ok{border-color:rgba(0,255,136,0.4);}
+.fb-box.fail{border-color:rgba(255,45,85,0.4);}
+.fb-ico{font-size:52px;margin-bottom:12px;}
+.fb-ttl{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;margin-bottom:10px;}
 .fb-box.ok .fb-ttl{color:var(--green);}
 .fb-box.fail .fb-ttl{color:var(--red);}
-.fb-exp{font-size:15px;line-height:1.75;color:var(--text);margin-bottom:16px;}
-.fb-xp{font-family:'Share Tech Mono',monospace;font-size:13px;padding:7px 18px;border-radius:2px;display:inline-block;margin-bottom:20px;}
-.fb-box.ok .fb-xp{background:rgba(0,255,136,0.1);color:var(--green);}
-.fb-box.fail .fb-xp{background:rgba(255,45,85,0.1);color:var(--red);}
-.btn-next{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:3px;padding:13px 30px;background:transparent;border:1px solid var(--muted);color:var(--text);border-radius:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.btn-next:hover{border-color:var(--cyan);color:var(--cyan);}
+.fb-exp{font-size:16px;line-height:1.6;color:var(--text);margin-bottom:16px;}
+.fb-xp{font-size:20px;font-weight:700;color:var(--yellow);margin-bottom:20px;}
+.btn-next{background:var(--surface);border:1.5px solid var(--cyan);color:var(--cyan);
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;
+  padding:12px 32px;border-radius:8px;cursor:pointer;text-transform:uppercase;transition:.2s;}
+.btn-next:hover{background:rgba(0,229,255,0.1);}
 
-/* RESULTADO */
-.res-host{position:fixed;inset:0;z-index:300;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto;}
-.res-host.on{display:flex;}
-.r-sh{font-size:74px;margin-bottom:14px;animation:sbr 2s infinite;}
-.r-ttl{font-family:'Orbitron',monospace;font-size:clamp(24px,6vw,40px);font-weight:900;color:var(--white);margin-bottom:8px;}
-.r-sub{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--cyan);letter-spacing:3px;margin-bottom:38px;opacity:0.8;}
-.r-stats{display:flex;gap:14px;justify-content:center;margin-bottom:34px;flex-wrap:wrap;}
-.r-st{background:var(--surf);border:1px solid var(--bord);border-radius:4px;padding:20px 26px;min-width:115px;}
-.r-sv{font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1;margin-bottom:6px;}
-.r-sl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.r-badge{background:var(--surf);border:1px solid var(--bord);border-radius:4px;padding:20px 32px;margin-bottom:34px;display:inline-block;}
-.rb-ico{font-size:42px;margin-bottom:8px;}
-.rb-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--yel);letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;}
-.rb-name{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--white);}
-.r-acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.btn-rp{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:2px;padding:15px 34px;background:var(--cyan);color:var(--bg);border:none;border-radius:3px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.btn-rp:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,255,0.3);}
-.btn-mp{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:2px;padding:15px 34px;background:transparent;color:var(--text);border:1px solid var(--bord);border-radius:3px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.btn-mp:hover{border-color:var(--cyan);color:var(--cyan);}
+/* ── RESULT OVERLAY ── */
+#res-host{position:fixed;inset:0;background:rgba(7,11,20,0.95);display:none;
+  align-items:center;justify-content:center;z-index:60;padding:24px;}
+#res-host.on{display:flex;}
+.res-card{background:var(--surface);border-radius:20px;padding:36px 28px;max-width:440px;
+  width:100%;text-align:center;border:1px solid var(--border);}
+.r-shield{font-size:64px;margin-bottom:8px;}
+.r-ttl{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--white);margin-bottom:4px;}
+.r-sub{font-size:14px;color:var(--cyan);letter-spacing:2px;margin-bottom:24px;}
+.r-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+.rstat{background:var(--card);border-radius:10px;padding:14px 8px;text-align:center;}
+.rstat-v{font-size:22px;font-weight:700;color:var(--white);}
+.rstat-l{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:1px;}
+.r-badge{background:rgba(255,214,10,0.08);border:1px solid rgba(255,214,10,0.25);
+  border-radius:12px;padding:16px;margin-bottom:20px;}
+.r-badge-ico{font-size:36px;margin-bottom:4px;}
+.r-badge-lbl{font-size:11px;color:var(--muted);letter-spacing:2px;}
+.r-badge-name{font-size:16px;font-weight:700;color:var(--yellow);}
+.r-actions{display:flex;gap:10px;}
+.btn-replay{flex:1;background:rgba(0,229,255,0.1);border:1.5px solid var(--cyan);color:var(--cyan);
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;padding:12px;
+  border-radius:8px;cursor:pointer;transition:.2s;}
+.btn-replay:hover{background:rgba(0,229,255,0.2);}
+.btn-map{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--text);
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;padding:12px;
+  border-radius:8px;cursor:pointer;transition:.2s;}
+.btn-map:hover{border-color:var(--cyan);color:var(--cyan);}
 
-canvas#ptcl{position:fixed;inset:0;pointer-events:none;z-index:400;}
+/* ── STATS ── */
+#sst{padding:24px 16px 40px;}
+.stats-top{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.stats-back{background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:'Rajdhani',sans-serif;font-size:14px;padding:7px 16px;border-radius:7px;cursor:pointer;transition:.2s;}
+.stats-back:hover{border-color:var(--cyan);color:var(--cyan);}
+.stats-title{font-family:'Orbitron',monospace;font-size:18px;color:var(--cyan);letter-spacing:2px;}
+.sp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;
+  display:flex;align-items:center;gap:18px;margin-bottom:20px;}
+.sp-av{font-size:48px;}
+.sp-name{font-family:'Orbitron',monospace;font-size:18px;color:var(--white);}
+.sp-title{font-size:12px;color:var(--cyan);letter-spacing:2px;}
+.sp-xp{font-size:20px;font-weight:700;color:var(--yellow);margin-top:4px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.sstat{background:var(--card);border-radius:10px;padding:16px;text-align:center;}
+.sstat-v{font-size:24px;font-weight:700;color:var(--white);}
+.sstat-l{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px;}
+.hist-title{font-size:12px;color:var(--muted);letter-spacing:2px;font-weight:700;margin-bottom:12px;}
+.hist-list{display:flex;flex-direction:column;gap:8px;}
+.hist-item{background:var(--card);border-radius:8px;padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;}
+.hist-mod{font-size:14px;color:var(--text);}
+.hist-score{font-size:14px;font-weight:700;color:var(--green);}
+.hist-date{font-size:11px;color:var(--muted);text-align:right;}
+
+canvas{position:fixed;inset:0;pointer-events:none;z-index:40;}
 </style>
 </head>
 <body>
 
-<div class="bg-fx"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div><div class="scanline"></div></div>
+<!-- ══ INTRO ══ -->
+<div class="screen active" id="si">
+  <div class="logo-ring"><div class="logo-ico">🛡️</div></div>
+  <div class="logo-title">CYBERSHIELD</div>
+  <div class="logo-sub">ENTRENAMIENTO DE AGENTES</div>
+  <div class="epic-quote">
+    "El <strong>90% de los ataques digitales</strong> comienzan con un error humano. Hoy, ese humano <strong>no serás tú</strong>."
+  </div>
+  <button class="btn-primary" onclick="show('ss')">▶ INICIAR MISIÓN</button>
+</div>
 
-<!-- ═══ S1 BIENVENIDA ═══ -->
-<div id="sw" class="sc on">
-  <div class="wi">
-    <div class="sh-wrap">
-      <div class="sh-r"></div><div class="sh-r2"></div>
-      <div class="sh-ico">🛡️</div>
-    </div>
-    <h1 class="cs-logo">CYBER<em>SHIELD</em></h1>
-    <p class="cs-tag">Plataforma de Entrenamiento en Ciberseguridad</p>
-    <div class="epic">
-      <p class="epic-q">"El <strong>90% de los ataques digitales</strong> comienzan con un error humano.<br>Hoy, ese humano <strong>no serás tú</strong>."</p>
-      <div class="epic-src">— Informe Global de Ciberseguridad 2024</div>
-    </div>
-    <div class="qstats">
-      <div class="qs"><div class="qsdot" style="background:var(--cyan)"></div>6 módulos de entrenamiento</div>
-      <div class="qs"><div class="qsdot" style="background:var(--green)"></div>Casos reales de CR</div>
-      <div class="qs"><div class="qsdot" style="background:var(--yel)"></div>XP e Insignias</div>
-    </div>
-    <button class="btn-cta" onclick="show('sa')"><span>⚡ COMENZAR MISIÓN</span></button>
+<!-- ══ SETUP ══ -->
+<div class="screen" id="ss">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;">
+  <div class="setup-card">
+    <div class="setup-title">CREAR AGENTE</div>
+    <input class="name-inp" id="name-inp" type="text" placeholder="Nombre de Agente" maxlength="18"/>
+    <div class="av-grid" id="av-grid"></div>
+    <button class="btn-primary" onclick="createAgent()">CONFIRMAR AGENTE</button>
+  </div>
   </div>
 </div>
 
-<!-- ═══ S2 AGENTE ═══ -->
-<div id="sa" class="sc">
-  <div class="a-hdr">
-    <span class="a-hdr-logo">🛡️ CYBERSHIELD</span>
-    <span class="a-hdr-step">IDENTIFICACIÓN DE AGENTE</span>
-  </div>
-  <div class="a-body">
-    <div>
-      <div class="sec-ttl">01 · Elige tu nombre de agente</div>
-      <div class="ni-wrap">
-        <span class="ni-ico">🕵️</span>
-        <input id="agent-name" class="ni" type="text" maxlength="16" placeholder="ESCRIBE TU NOMBRE..." oninput="onName()" autocomplete="off" spellcheck="false">
-      </div>
-      <div class="ni-cnt"><span id="nlen">0</span>/16</div>
-    </div>
-    <div>
-      <div class="sec-ttl">02 · Escoge tu avatar</div>
-      <div class="av-grid" id="av-grid"></div>
-    </div>
-    <button class="btn-conf" id="btn-conf" onclick="confirmAgent()">🚀 ACTIVAR AGENTE Y ENTRAR AL MAPA</button>
-  </div>
-</div>
-
-<!-- ═══ S3 MAPA ═══ -->
-<div id="sm" class="sc">
-  <div class="m-hdr">
-    <div class="m-logo">🛡️ CYBERSHIELD</div>
-    <button class="btn-stats" onclick="show('ss')">📊 MIS ESTADÍSTICAS</button>
-    <div class="pb" id="player-badge">
-      <span class="pb-av" id="pb-av">🕵️</span>
+<!-- ══ MAP ══ -->
+<div class="screen" id="sm">
+  <div class="map-top">
+    <div class="map-agent">
+      <div class="map-av" id="map-av">🤖</div>
       <div>
-        <div class="pb-nm" id="pb-nm">AGENTE</div>
-        <div class="pb-xp" id="pb-xp">⚡ 0 XP</div>
+        <div class="map-name" id="map-name">AGENTE</div>
+        <div class="map-xp" id="map-xp">⚡ 0 XP</div>
       </div>
     </div>
+    <button class="map-stats-btn" onclick="showStats()">📊 ESTADÍSTICAS</button>
   </div>
-  <div class="m-body">
-    <div class="m-heading">CENTRO DE OPERACIONES</div>
-    <div class="m-sub">SELECCIONA UN MÓDULO PARA INICIAR ENTRENAMIENTO</div>
-    <div class="mod-list" id="mod-list"></div>
+  <div class="map-title">MAPA DE OPERACIONES</div>
+  <div class="mod-list" id="mod-list"></div>
+</div>
+
+<!-- ══ GAME SCREEN ══ -->
+<div class="screen" id="sg">
+  <div class="g-top">
+    <div class="g-ttl" id="g-ttl">MÓDULO</div>
+    <div class="g-stats">
+      <div class="gstat">⚡<span id="g-xp">0</span></div>
+      <div class="gstat" style="color:var(--green)">✓<span id="g-ok">0</span></div>
+      <div class="gstat" style="color:var(--red)">✗<span id="g-err">0</span></div>
+    </div>
+    <button class="g-back" onclick="goMap()">✕ SALIR</button>
+  </div>
+  <div class="t-bar"><div class="t-fill" id="t-fill" style="width:100%"></div></div>
+  <div class="pdots" id="pdots"></div>
+
+  <!-- MÓDULO 1 — Detector de Amenazas -->
+  <div id="czone">
+    <div class="tc-card" id="tc-card">
+      <div class="tc-head">
+        <div class="tc-ico" id="tc-ico">📧</div>
+        <div>
+          <div class="tc-from" id="tc-from">remitente</div>
+          <div class="tc-subj" id="tc-subj">Asunto</div>
+        </div>
+      </div>
+      <div class="tc-body" id="tc-body">
+        <div id="cl-body-main"></div>
+        <div class="tc-link" id="tc-link" style="display:none"></div>
+      </div>
+      <div class="tc-clues" id="tc-clues">
+        <div class="tc-clue-ttl">💡 PISTAS DE SEGURIDAD</div>
+        <div id="cl-body"></div>
+      </div>
+    </div>
+    <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 VER PISTAS (−5 XP)</button>
+    <div id="act-zone">
+      <button class="act-btn act-phish" onclick="answer1('phish')">🎣 ES PHISHING</button>
+      <button class="act-btn act-safe" onclick="answer1('safe')">✅ ES LEGÍTIMO</button>
+    </div>
+  </div>
+
+  <!-- MÓDULO 2 — Inspector de Contraseñas -->
+  <div id="izone">
+    <div class="insp-pw-card">
+      <div class="insp-context">ESCENARIO</div>
+      <div class="insp-scenario" id="insp-scenario">—</div>
+      <div class="insp-pw-label">CONTRASEÑA A ANALIZAR</div>
+      <div class="insp-pw" id="insp-pw">—</div>
+    </div>
+
+    <!-- Fase 1: Identificar -->
+    <div id="phase1-zone">
+      <div style="text-align:center;margin-bottom:10px;">
+        <div class="phase-badge">⬡ FASE 1 DE 3 — IDENTIFICAR</div>
+      </div>
+      <div class="insp-question">¿Cómo clasificas esta contraseña?</div>
+      <div class="phase-fb" id="p1-fb"></div>
+      <div class="classify-grid">
+        <button class="cls-btn cls-weak" onclick="ansPhase1('weak')"><span class="cls-ico">⚠️</span>DÉBIL</button>
+        <button class="cls-btn cls-strong" onclick="ansPhase1('strong')"><span class="cls-ico">🔒</span>FUERTE</button>
+        <button class="cls-btn cls-trap" onclick="ansPhase1('trap')"><span class="cls-ico">🪤</span>TRAMPA</button>
+      </div>
+      <button class="btn-next-phase" id="btn-p1-next" onclick="showPhase(2)">SIGUIENTE FASE →</button>
+    </div>
+
+    <!-- Fase 2: Diagnosticar -->
+    <div id="phase2-zone">
+      <div style="text-align:center;margin-bottom:10px;">
+        <div class="phase-badge">⬡ FASE 2 DE 3 — DIAGNOSTICAR</div>
+      </div>
+      <div class="insp-question" id="p2-question">—</div>
+      <div class="phase-fb" id="p2-fb"></div>
+      <div class="diag-options" id="diag-options"></div>
+      <button class="btn-next-phase" id="btn-p2-next" onclick="showPhase(3)">SIGUIENTE FASE →</button>
+    </div>
+
+    <!-- Fase 3: Mejorar -->
+    <div id="phase3-zone">
+      <div style="text-align:center;margin-bottom:10px;">
+        <div class="phase-badge">⬡ FASE 3 DE 3 — MEJORAR</div>
+      </div>
+      <div class="insp-question">¿Cuál de estas versiones es la más segura?</div>
+      <div class="phase-fb" id="p3-fb"></div>
+      <div class="improve-options" id="improve-options"></div>
+      <button class="btn-next-phase" id="btn-p3-next" onclick="finishChallenge()">SIGUIENTE RETO →</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══ S4 STATS ═══ -->
-<div id="ss" class="sc">
-  <div class="stats-hdr">
-    <div class="stats-hdr-logo">🛡️ ESTADÍSTICAS</div>
-    <button class="btn-back-sm" onclick="show('sm')">← VOLVER AL MAPA</button>
+<!-- ══ STATS ══ -->
+<div class="screen" id="sst">
+  <div class="stats-top">
+    <button class="stats-back" onclick="show('sm')">← MAPA</button>
+    <div class="stats-title">ESTADÍSTICAS</div>
   </div>
-  <div class="stats-body">
-    <div class="stats-player" id="stats-player">
-      <div class="sp-av" id="sp-av">🕵️</div>
-      <div class="sp-info">
-        <div class="sp-name" id="sp-name">AGENTE</div>
-        <div class="sp-title" id="sp-title">APRENDIZ CYBER</div>
-      </div>
-      <div style="margin-left:auto;text-align:right">
-        <div class="sp-xp" id="sp-xp">0</div>
-        <div class="sp-xp-lbl">XP TOTAL</div>
-      </div>
+  <div class="sp-card">
+    <div class="sp-av" id="sp-av">🤖</div>
+    <div>
+      <div class="sp-name" id="sp-name">AGENTE</div>
+      <div class="sp-title" id="sp-title">APRENDIZ CYBER</div>
+      <div class="sp-xp" id="sp-xp">⚡ 0 XP</div>
     </div>
-    <div class="stats-grid" id="stats-grid"></div>
-    <div class="hist-ttl">HISTORIAL DE PARTIDAS</div>
-    <div id="hist-list"></div>
+  </div>
+  <div class="stats-grid">
+    <div class="sstat"><div class="sstat-v" id="st-mods">0</div><div class="sstat-l">MÓDULOS</div></div>
+    <div class="sstat"><div class="sstat-v" id="st-games">0</div><div class="sstat-l">PARTIDAS</div></div>
+    <div class="sstat"><div class="sstat-v" id="st-acc">0%</div><div class="sstat-l">PRECISIÓN</div></div>
+    <div class="sstat"><div class="sstat-v" id="st-ok">0</div><div class="sstat-l">ACIERTOS</div></div>
+  </div>
+  <div class="hist-title">HISTORIAL DE PARTIDAS</div>
+  <div class="hist-list" id="hist-list"></div>
+</div>
+
+<!-- ══ FEEDBACK OVERLAY ══ -->
+<div id="fb-ov">
+  <div class="fb-box" id="fb-box">
+    <div class="fb-ico" id="fb-ico">✅</div>
+    <div class="fb-ttl" id="fb-ttl">CORRECTO</div>
+    <div class="fb-exp" id="fb-exp"></div>
+    <div class="fb-xp" id="fb-xp">+0 XP</div>
+    <button class="btn-next" onclick="nextCard()">SIGUIENTE RETO →</button>
   </div>
 </div>
 
-<!-- ═══ S5 JUEGO ═══ -->
-<div id="sg" class="sc">
-  <div class="g-host">
-    <div class="g-top">
-      <button class="btn-bk" onclick="goMap()">← MAPA</button>
-      <div class="g-ttl" id="g-ttl">🛡️ MÓDULO 01</div>
-      <div class="g-stats">
-        <div class="gst"><div class="gst-l">XP</div><div class="gst-v cy" id="g-xp">0</div></div>
-        <div class="gst"><div class="gst-l">OK</div><div class="gst-v gr" id="g-ok">0</div></div>
-        <div class="gst"><div class="gst-l">ERR</div><div class="gst-v rd" id="g-err">0</div></div>
-      </div>
-    </div>
-    <div class="t-strip"><div class="t-bg"><div class="t-fill" id="t-fill" style="width:100%"></div></div></div>
-    <div class="pdots" id="pdots"></div>
-
-    <!-- M1: zona tarjeta -->
-    <div class="czone" id="czone">
-      <div class="tcard" id="tcard">
-        <div class="tc-stripe" id="tc-str"></div>
-        <div class="tc-hd">
-          <span class="tc-ico" id="tc-ico">📧</span>
-          <div><div class="tc-type" id="tc-type">EMAIL</div><div class="tc-from" id="tc-from">—</div></div>
-        </div>
-        <div class="tc-body">
-          <div class="tc-subj" id="tc-subj"></div>
-          <div class="tc-cont" id="tc-cont"></div>
-          <div class="tc-link" id="tc-link" style="display:none"></div>
-          <div class="tc-clues" id="tc-clues">
-            <div class="cl-hd">💡 ANÁLISIS DEL EXPERTO</div>
-            <div id="cl-body"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- M2: zona forge -->
-    <div class="forge-zone" id="fzone" style="display:none">
-      <div class="forge-card" id="forge-card">
-        <div class="forge-stripe"></div>
-        <div class="forge-hd">
-          <div class="forge-scenario" id="f-scenario">ESCENARIO</div>
-          <div class="forge-q" id="f-question">¿Es esta contraseña segura?</div>
-        </div>
-        <div class="forge-body">
-          <div class="forge-pw-display" id="f-pw">—</div>
-          <div class="strength-bar-wrap">
-            <div class="strength-label">
-              <span class="sl-text">FORTALEZA</span>
-              <span class="sl-val" id="str-val">—</span>
-            </div>
-            <div class="str-bg"><div class="str-fill" id="str-fill" style="width:0%;background:var(--red)"></div></div>
-          </div>
-          <div class="ingr-ttl">SELECCIONA LOS INGREDIENTES DE TU CONTRASEÑA</div>
-          <div class="ingr-grid" id="ingr-grid"></div>
-          <button class="forge-submit" id="forge-submit" onclick="submitForge()" disabled>⚔️ FORJAR Y ENVIAR</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Acciones M1 -->
-    <div class="act-zone" id="act-zone">
-      <button class="abtn abtn-safe" onclick="answer('safe')"><span class="ai">✅</span>SEGURO</button>
-      <button class="abtn abtn-phish" onclick="answer('phish')"><span class="ai">☠️</span>PHISHING</button>
-      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Ver pista del experto (−5 XP)</button>
-    </div>
-  </div>
-
-  <!-- Feedback -->
-  <div class="fb-ov" id="fb-ov">
-    <div class="fb-box" id="fb-box">
-      <span class="fb-ico" id="fb-ico"></span>
-      <div class="fb-ttl" id="fb-ttl"></div>
-      <div class="fb-exp" id="fb-exp"></div>
-      <div class="fb-xp" id="fb-xp"></div>
-      <button class="btn-next" onclick="nextCard()">SIGUIENTE →</button>
-    </div>
-  </div>
-
-  <!-- Resultado -->
-  <div class="res-host" id="res-host">
-    <div class="r-sh" id="r-sh">🛡️</div>
-    <div class="r-ttl" id="r-ttl"></div>
-    <div class="r-sub" id="r-sub"></div>
+<!-- ══ RESULT OVERLAY ══ -->
+<div id="res-host">
+  <div class="res-card">
+    <div class="r-shield" id="r-sh">🛡️</div>
+    <div class="r-ttl" id="r-ttl">MISIÓN COMPLETADA</div>
+    <div class="r-sub" id="r-sub">BIEN HECHO</div>
     <div class="r-stats">
-      <div class="r-st"><div class="r-sv" id="r-xp" style="color:var(--cyan)">0</div><div class="r-sl">XP</div></div>
-      <div class="r-st"><div class="r-sv" id="r-ok" style="color:var(--green)">0/8</div><div class="r-sl">Correctas</div></div>
-      <div class="r-st"><div class="r-sv" id="r-acc" style="color:var(--yel)">0%</div><div class="r-sl">Precisión</div></div>
+      <div class="rstat"><div class="rstat-v" id="r-xp">0</div><div class="rstat-l">XP</div></div>
+      <div class="rstat"><div class="rstat-v" id="r-ok">0/0</div><div class="rstat-l">CORRECTOS</div></div>
+      <div class="rstat"><div class="rstat-v" id="r-acc">0%</div><div class="rstat-l">PRECISIÓN</div></div>
     </div>
     <div class="r-badge">
-      <div class="rb-ico" id="rb-ico">🏅</div>
-      <div class="rb-lbl">Insignia Desbloqueada</div>
-      <div class="rb-name" id="rb-name">—</div>
+      <div class="r-badge-ico" id="rb-ico">🏅</div>
+      <div class="r-badge-lbl">INSIGNIA DESBLOQUEADA</div>
+      <div class="r-badge-name" id="rb-name">—</div>
     </div>
-    <div class="r-acts">
-      <button class="btn-rp" onclick="replayMod()">⚡ REPETIR</button>
-      <button class="btn-mp" onclick="goMap()">🗺️ AL MAPA</button>
+    <div class="r-actions">
+      <button class="btn-replay" onclick="replayMod()">⚡ REPETIR</button>
+      <button class="btn-map" onclick="goMap()">🗺️ MAPA</button>
     </div>
   </div>
 </div>
@@ -508,268 +480,419 @@ canvas#ptcl{position:fixed;inset:0;pointer-events:none;z-index:400;}
 <canvas id="ptcl"></canvas>
 
 <script>
-/* ═══ AVATARES ═══ */
+/* ══════════════════════════════════════
+   AVATARES
+══════════════════════════════════════ */
 const AVATARS=[
-  {e:'🤖',n:'IA-7'},{e:'🥷',n:'Sombra'},{e:'👾',n:'Pixel'},{e:'🦾',n:'Cyborg'},
-  {e:'🕵️',n:'Agente X'},{e:'🧬',n:'Neo'},{e:'⚡',n:'Volt'},{e:'🔮',n:'Oracle'},
-  {e:'🛸',n:'Alien-1'},{e:'🦊',n:'Zorro'}
+  {emoji:'🤖',name:'IA-7'},{emoji:'🥷',name:'Sombra'},{emoji:'👾',name:'Pixel'},
+  {emoji:'🦾',name:'Cyborg'},{emoji:'🕵️',name:'Agente X'},{emoji:'🧬',name:'Neo'},
+  {emoji:'⚡',name:'Volt'},{emoji:'🔮',name:'Oracle'},{emoji:'🛸',name:'Alien-1'},{emoji:'🦊',name:'Zorro'},
 ];
 
-/* ═══ MÓDULOS ═══ */
-const MODS=[
+/* ══════════════════════════════════════
+   MÓDULOS
+══════════════════════════════════════ */
+const MODULES=[
   {id:1,icon:'🎯',name:'Detector de Amenazas',desc:'Identifica phishing en emails, SMS y redes sociales',xp:80,color:'var(--cyan)'},
-  {id:2,icon:'🔐',name:'Constructor de Escudos',desc:'Forja contraseñas invulnerables bajo presión',xp:100,color:'var(--green)'},
-  {id:3,icon:'🕵️',name:'Agente Encubierto',desc:'Toma el rol del hacker — piensa como el enemigo',xp:120,color:'var(--purp)'},
-  {id:4,icon:'🗺️',name:'Mapa de Riesgos',desc:'Navega decisiones del mundo real sin caer en trampas',xp:110,color:'var(--yel)'},
-  {id:5,icon:'🧠',name:'Mentalidad Segura',desc:'Dilemas reales — ¿tomarías la decisión correcta?',xp:90,color:'var(--ora)'},
-  {id:6,icon:'🏰',name:'Torre de Defensa',desc:'Estrategia pura: protege tu base de oleadas de ataques',xp:150,color:'var(--red)'},
+  {id:2,icon:'🔍',name:'Inspector de Contraseñas',desc:'Identifica, diagnostica y mejora contraseñas',xp:120,color:'var(--green)'},
+  {id:3,icon:'🕵️',name:'Agente Encubierto',desc:'Toma el rol del hacker — piensa como el enemigo',xp:140,color:'var(--purple)'},
+  {id:4,icon:'🗺️',name:'Mapa de Riesgos',desc:'Navega decisiones del mundo real sin caer en trampas',xp:130,color:'var(--yellow)'},
+  {id:5,icon:'🧠',name:'Mentalidad Segura',desc:'Dilemas reales — ¿tomarías la decisión correcta?',xp:150,color:'var(--ora)'},
+  {id:6,icon:'🏰',name:'Torre de Defensa',desc:'Protege tu dispositivo de oleadas de ataques',xp:160,color:'var(--red)'},
 ];
 
-/* ═══ ESTADO GLOBAL ═══ */
-let P={name:'',avatar:null,xp:0,completed:[],history:[]};
-let selAv=null;
-let curMod=0;
+/* ══════════════════════════════════════
+   MÓDULO 1 — TARJETAS PHISHING
+══════════════════════════════════════ */
+const CARDS1=[
+  {type:'email',icon:'📧',from:'soporte@bancopopular-seguro.net',
+   subj:'URGENTE: Su cuenta será suspendida en 24 horas',
+   body:'Estimado cliente: Hemos detectado actividad sospechosa. Para evitar la suspensión, verifique sus datos inmediatamente.',
+   link:'bancopopular-seguro.net/verificar?id=8821',
+   ans:'phish',clues:['El dominio no es el oficial del banco','La urgencia artificial es una táctica de phishing','Los bancos nunca piden datos por email'],
+   explain:'Phishing clásico. El dominio "bancopopular-seguro.net" imita un banco real pero es falso. Los bancos legítimos nunca solicitan credenciales por correo.',xp:15},
+  {type:'sms',icon:'📱',from:'+1-555-0123',
+   subj:'SMS — Número desconocido',
+   body:'CORREOS CR: Su paquete #CR847291 está retenido. Pague $2.50 de arancel en: correos-cr-pagos.com',
+   link:'correos-cr-pagos.com/pago',
+   ans:'phish',clues:['Correos de Costa Rica no cobra por SMS','El dominio no es correos.go.cr','Nunca pagues sin verificar en el sitio oficial'],
+   explain:'Smishing (phishing por SMS). Correos de Costa Rica usa correos.go.cr, no dominios comerciales. El monto pequeño busca que no lo cuestiones.',xp:12},
+  {type:'email',icon:'📧',from:'noreply@google.com',
+   subj:'Tu contraseña de Google fue cambiada',
+   body:'Hola, tu contraseña de Google fue modificada el 3 de mayo a las 10:14 AM desde Costa Rica (San José). Si fuiste tú, ignora este mensaje. Si no reconoces esta actividad, revisa tu cuenta.',
+   link:null,
+   ans:'safe',clues:['El dominio es google.com oficial','No pide que hagas clic en nada urgente','Es una notificación informativa, no pide datos'],
+   explain:'Email legítimo de Google. El dominio es auténtico, no hay link sospechoso ni solicitud de datos. Google envía estas notificaciones de seguridad de forma rutinaria.',xp:12},
+  {type:'social',icon:'💬',from:'Instagram — Soporte Oficial',
+   subj:'Tu cuenta será eliminada por violación de derechos',
+   body:'Hemos recibido 3 reportes de copyright contra tu perfil. Para apelar y conservar tu cuenta, debes completar el proceso en: ig-appeals-center.com antes de las 48 horas.',
+   link:'ig-appeals-center.com/appeal',
+   ans:'phish',clues:['Instagram comunica esto dentro de la app, no por mensaje','El link no es instagram.com','Las apelaciones reales se hacen desde Configuración → Ayuda'],
+   explain:'Fraude de apelación falsa. Instagram gestiona todas las disputas dentro de su propia plataforma. Nunca redirige a dominios externos como "ig-appeals-center.com".',xp:15},
+  {type:'email',icon:'📧',from:'facturacion@netflix.com',
+   subj:'Problema con tu pago — Actualiza tu método',
+   body:'Tu suscripción a Netflix no pudo renovarse. Para seguir viendo sin interrupciones, actualiza tu forma de pago en: netflix-update-billing.com/pago/seguro',
+   link:'netflix-update-billing.com/pago/seguro',
+   ans:'phish',clues:['El link no es netflix.com sino un dominio falso','Netflix no envía links externos para pagos','Verifica siempre en netflix.com directamente'],
+   explain:'Phishing de Netflix. El dominio "netflix-update-billing.com" es falso. Netflix solo usa netflix.com. Ante dudas, entra directamente a tu cuenta sin hacer clic.',xp:15},
+  {type:'email',icon:'📧',from:'no-reply@github.com',
+   subj:'[GitHub] Pull request review requested',
+   body:'colega-dev ha solicitado tu revisión en el PR #142: "feat: add OAuth2 login". Haz clic en el botón de abajo para revisar los cambios en el repositorio.',
+   link:null,
+   ans:'safe',clues:['El remitente es github.com oficial','Es una notificación técnica esperada','No hay urgencia ni solicitud de datos personales'],
+   explain:'Notificación legítima de GitHub. El dominio es auténtico y el contenido corresponde al uso normal de la plataforma. No hay señales de phishing.',xp:10},
+  {type:'email',icon:'📧',from:'premios@hacienda-cr-loteria.com',
+   subj:'¡Felicidades! Usted ganó ₡2,500,000 — Reclame hoy',
+   body:'El Ministerio de Hacienda le informa que su número de cédula fue seleccionado en el sorteo nacional. Para reclamar su premio, envíe una copia de su cédula y número de cuenta IBAN.',
+   link:'hacienda-cr-loteria.com/reclamar',
+   ans:'phish',clues:['Hacienda no realiza loterías ni sorteos','Nunca envíes tu cédula ni IBAN por email','El dominio es falso — Hacienda usa hacienda.go.cr'],
+   explain:'Estafa clásica de premio falso. El Ministerio de Hacienda no hace sorteos. Solicitar cédula + IBAN es robo de identidad y saqueo bancario en un paso.',xp:18},
+  {type:'sms',icon:'📱',from:'BANCO BCR',
+   subj:'SMS — BCR',
+   body:'BCR: Transacción aprobada por ₡45,000 en comercio AMAZON el 03/05. Si no reconoces, llama al 2211-1111.',
+   link:null,
+   ans:'safe',clues:['No pide hacer clic en ningún enlace','Proporciona un número oficial para contacto','Es una notificación de transacción estándar'],
+   explain:'SMS legítimo del BCR. Los bancos envían notificaciones de transacciones sin links. Solo dan un número de teléfono oficial. No hay solicitud de datos.',xp:10},
+];
 
-/* ═══ NAVEGACIÓN ═══ */
+/* ══════════════════════════════════════
+   MÓDULO 2 — 10 RETOS INSPECTOR
+══════════════════════════════════════ */
+const CARDS2=[
+  {
+    scenario:'Cuenta de redes sociales',
+    pw:'123456',
+    type:'weak',
+    explain:'La contraseña más hackeada del mundo. Es una secuencia numérica simple que cualquier software descifra en menos de un segundo usando ataques de diccionario.',
+    xp:30,
+    diagQ:'¿Cuál es el problema principal de esta contraseña?',
+    diagOpts:[
+      {text:'Es una secuencia numérica predecible',correct:true},
+      {text:'No tiene letras mayúsculas',correct:false},
+      {text:'Es demasiado técnica y difícil de recordar',correct:false},
+      {text:'Solo aplica para cuentas bancarias',correct:false},
+    ],
+    improveOpts:[
+      {pw:'1234567890',label:'Más larga pero igual de predecible'},
+      {pw:'123@456',label:'Con símbolo pero sigue siendo obvia'},
+      {pw:'Lluv!a#47xK9',label:'Aleatoria con todos los tipos de caracteres',correct:true},
+    ]
+  },
+  {
+    scenario:'Acceso a correo corporativo',
+    pw:'P@ssw0rd!',
+    type:'trap',
+    explain:'Parece fuerte pero está en todas las listas de contraseñas comprometidas. Las sustituciones a→@, o→0 son tan conocidas que los hackers las incluyen primero en sus ataques.',
+    xp:30,
+    diagQ:'¿Por qué esta contraseña es una trampa aunque "parece" segura?',
+    diagOpts:[
+      {text:'Las sustituciones obvias (a→@ o→0) están en listas de hackers',correct:true},
+      {text:'Tiene demasiados caracteres especiales',correct:false},
+      {text:'Las letras mayúsculas no funcionan bien',correct:false},
+      {text:'Es muy difícil de recordar',correct:false},
+    ],
+    improveOpts:[
+      {pw:'P@ssw0rd!2024',label:'Más larga pero sigue siendo trampa'},
+      {pw:'mYp@ssword!',label:'Variación obvia igualmente conocida'},
+      {pw:'lluvia-TIGRE-7-azul!',label:'Frase de paso con variedad real',correct:true},
+    ]
+  },
+  {
+    scenario:'Plataforma bancaria en línea',
+    pw:'Maria1990',
+    type:'weak',
+    explain:'Combinar nombre + año de nacimiento es uno de los patrones que los atacantes prueban primero. Con tu nombre visible en redes sociales, descifrarla toma segundos.',
+    xp:30,
+    diagQ:'¿Qué hace débil a esta contraseña?',
+    diagOpts:[
+      {text:'Usa datos personales predecibles (nombre + año)',correct:true},
+      {text:'No tiene suficientes números',correct:false},
+      {text:'El año hace que expire automáticamente',correct:false},
+      {text:'Los nombres propios son seguros como contraseña',correct:false},
+    ],
+    improveOpts:[
+      {pw:'Maria1990!',label:'Con símbolo al final, pero igual de predecible'},
+      {pw:'M@r1a1990',label:'Sustituciones de datos personales, sigue siendo trampa'},
+      {pw:'k#9Lm$2xPw!R',label:'Completamente aleatoria sin datos personales',correct:true},
+    ]
+  },
+  {
+    scenario:'Gestor de contraseñas (contraseña maestra)',
+    pw:'k#9Lm$2xPw!R',
+    type:'strong',
+    explain:'Contraseña fuerte: 12 caracteres, combina mayúsculas, minúsculas, números y símbolos de forma aleatoria, sin patrones ni palabras reconocibles.',
+    xp:30,
+    diagQ:'¿Qué hace FUERTE a esta contraseña?',
+    diagOpts:[
+      {text:'Combina todos los tipos de caracteres sin patrones reconocibles',correct:true},
+      {text:'Contiene un nombre de persona conocida',correct:false},
+      {text:'Tiene exactamente 12 caracteres (número mágico)',correct:false},
+      {text:'Los símbolos al final la hacen imposible de hackear',correct:false},
+    ],
+    improveOpts:[
+      {pw:'k#9Lm$2xPw!R',label:'La original — ya es la más segura',correct:true},
+      {pw:'K#9lm$2XPW!r',label:'Solo cambia mayúsculas/minúsculas'},
+      {pw:'k9Lm2xPwR',label:'Sin símbolos ni números especiales'},
+    ]
+  },
+  {
+    scenario:'Red WiFi del hogar',
+    pw:'qwerty123',
+    type:'weak',
+    explain:'Secuencia de teclado + números consecutivos. Es el equivalente digital de dejar tu puerta sin cerrojo. Se encuentra en cualquier diccionario de contraseñas para hackers.',
+    xp:30,
+    diagQ:'¿Cuál es la debilidad principal de "qwerty123"?',
+    diagOpts:[
+      {text:'Es un patrón de teclado con secuencia numérica predecible',correct:true},
+      {text:'Tiene muy pocos números',correct:false},
+      {text:'Las letras minúsculas son inseguras',correct:false},
+      {text:'Está en inglés y debería estar en español',correct:false},
+    ],
+    improveOpts:[
+      {pw:'Qwerty123!',label:'Con mayúscula y símbolo, pero sigue siendo patrón de teclado'},
+      {pw:'qwerty123456',label:'Más larga, misma vulnerabilidad'},
+      {pw:'monTaña-ROJA-47-nube',label:'Frase de paso aleatoria, fácil de recordar y fuerte',correct:true},
+    ]
+  },
+  {
+    scenario:'Cuenta de streaming (Netflix/Disney)',
+    pw:'iloveyou',
+    type:'weak',
+    explain:'Una de las frases más comunes como contraseña a nivel mundial. Aparece en el top 10 de todas las filtraciones masivas de datos. Sin caracteres especiales ni números.',
+    xp:30,
+    diagQ:'¿Por qué "iloveyou" es peligrosa como contraseña?',
+    diagOpts:[
+      {text:'Es una frase emotiva muy común, presente en todas las listas de hackers',correct:true},
+      {text:'Contiene la palabra "love" que está prohibida',correct:false},
+      {text:'El inglés es menos seguro que el español',correct:false},
+      {text:'Es demasiado corta para cualquier uso',correct:false},
+    ],
+    improveOpts:[
+      {pw:'iloveyou2024',label:'Con año al final, sigue siendo predecible'},
+      {pw:'!L0veY0u2',label:'Sustituciones obvias de frase común'},
+      {pw:'pez-LUNA-sol-47!',label:'Sin conexión emocional, fácil de recordar',correct:true},
+    ]
+  },
+  {
+    scenario:'Cuenta universitaria / académica',
+    pw:'Admin2024!',
+    type:'trap',
+    explain:'"Admin" es la palabra más probada por atacantes al ingresar a sistemas. El año actual más un símbolo al final es un patrón tan conocido que las herramientas automáticas lo detectan primero.',
+    xp:30,
+    diagQ:'¿Por qué "Admin2024!" es una trampa peligrosa?',
+    diagOpts:[
+      {text:'"Admin" es la primera palabra que prueban los atacantes en sistemas',correct:true},
+      {text:'Las contraseñas con años son ilegales en muchos países',correct:false},
+      {text:'El símbolo ! no es reconocido por todos los sistemas',correct:false},
+      {text:'Solo es débil si el usuario se llama Admin',correct:false},
+    ],
+    improveOpts:[
+      {pw:'Admin2024!#',label:'Más símbolos, misma trampa base'},
+      {pw:'@dm1n_2024',label:'Sustituciones de "Admin", igual de conocida'},
+      {pw:'Xp7#mK2$nL9q',label:'Sin palabras reconocibles, completamente aleatoria',correct:true},
+    ]
+  },
+  {
+    scenario:'Acceso VPN de trabajo',
+    pw:'lluvia-caballo-lima-7',
+    type:'strong',
+    explain:'Frase de paso (passphrase): 4 palabras aleatorias más un número. Tiene más de 70 bits de entropía, es prácticamente imposible de forzar y es fácil de memorizar.',
+    xp:30,
+    diagQ:'¿Qué tipo de técnica hace fuerte esta contraseña?',
+    diagOpts:[
+      {text:'Es una frase de paso (passphrase) con palabras aleatorias',correct:true},
+      {text:'Tiene guiones que bloquean los ataques automáticos',correct:false},
+      {text:'El número al final multiplica su seguridad por 10',correct:false},
+      {text:'El idioma español la hace imposible de hackear en el exterior',correct:false},
+    ],
+    improveOpts:[
+      {pw:'lluvia-caballo-lima-7',label:'La original — ya es fuerte y memorable',correct:true},
+      {pw:'lluvia7',label:'Solo partes de la frase, pierde entropía'},
+      {pw:'LluviaC@balloL1ma7',label:'Sustituciones innecesarias que la hacen menos memorable'},
+    ]
+  },
+  {
+    scenario:'Cuenta de juego en línea',
+    pw:'Tr3s@Gatos22',
+    type:'trap',
+    explain:'Parece fuerte por las sustituciones (e→3, a→@), pero "Tres Gatos" con el año es un patrón predecible. Las herramientas modernas generan variaciones con sustituciones automáticamente.',
+    xp:30,
+    diagQ:'¿Qué hace de esta contraseña una "trampa"?',
+    diagOpts:[
+      {text:'Las sustituciones de letras son predecibles y los hackers las generan automáticamente',correct:true},
+      {text:'Usar animales en contraseñas está prohibido',correct:false},
+      {text:'El número 22 al final la hace automáticamente débil',correct:false},
+      {text:'La @ no es aceptada en contraseñas de juegos',correct:false},
+    ],
+    improveOpts:[
+      {pw:'Tr3s@Gatos2024!',label:'Más larga pero mismo patrón con sustituciones'},
+      {pw:'TresGatos22!!',label:'Sin sustituciones, igual de predecible'},
+      {pw:'solar-NIEBLA-42-trébol',label:'Frase de paso aleatoria sin patrones conocidos',correct:true},
+    ]
+  },
+  {
+    scenario:'Correo personal principal',
+    pw:'correcto-caballo-batería-grapa',
+    type:'strong',
+    explain:'Ejemplo clásico de passphrase segura (del cómic XKCD). Cuatro palabras aleatorias sin relación lógica generan más de 44 bits de entropía. Imposible de forzar y fácil de recordar.',
+    xp:30,
+    diagQ:'¿Por qué esta larga frase es más segura que una contraseña corta con símbolos?',
+    diagOpts:[
+      {text:'La longitud y aleatoriedad de las palabras generan alta entropía',correct:true},
+      {text:'Las palabras en español son más seguras que en otros idiomas',correct:false},
+      {text:'Los guiones cuentan como símbolos especiales suficientes',correct:false},
+      {text:'Siempre es mejor tener más de 20 caracteres sin importar el contenido',correct:false},
+    ],
+    improveOpts:[
+      {pw:'correcto-caballo-batería-grapa',label:'La original — longitud + aleatoriedad = ideal',correct:true},
+      {pw:'CaBalLo-GrApA',label:'Sustituciones que complican recordarla sin ganar mucho'},
+      {pw:'correcto123',label:'Solo parte de la frase, pierde toda la entropía'},
+    ]
+  },
+];
+
+/* ══════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════ */
+let P={name:'AGENTE',avatar:{emoji:'🤖',name:'IA-7'},xp:0,completed:[],history:[]};
+let curMod=1;
+let G1={cards:[],idx:0,xp:0,ok:0,err:0,timer:null,t:100,hinted:false,answered:false};
+let G2={cards:[],idx:0,xp:0,ok:0,err:0,timer:null,t:100,
+        phase:1,p1ok:false,p2ok:false,p3ok:false,answered:false};
+let selAv=0;
+const TICK=380;
+
+/* ══════════════════════════════════════
+   NAVEGACIÓN
+══════════════════════════════════════ */
 function show(id){
-  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
+
 function goMap(){
-  document.getElementById('res-host').classList.remove('on');
-  document.getElementById('fb-ov').classList.remove('on');
+  clearAllTimers();
   buildMap();
   show('sm');
 }
 
-/* ═══ AGENTE ═══ */
+function clearAllTimers(){
+  clearInterval(G1.timer);clearInterval(G2.timer);
+}
+
+/* ══════════════════════════════════════
+   SETUP
+══════════════════════════════════════ */
 function buildAvatars(){
   const g=document.getElementById('av-grid');
-  g.innerHTML='';
   AVATARS.forEach((av,i)=>{
     const b=document.createElement('button');
-    b.className='av-btn';
-    b.innerHTML=`<span class="av-em">${av.e}</span><span class="av-nm">${av.n}</span>`;
-    b.onclick=()=>{document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selAv=i;checkReady();};
+    b.className='av-btn'+(i===0?' sel':'');
+    b.innerHTML=`<span class="av-e">${av.emoji}</span><span class="av-n">${av.name}</span>`;
+    b.onclick=()=>{document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selAv=i;};
     g.appendChild(b);
   });
 }
-function onName(){
-  const v=document.getElementById('agent-name').value;
-  document.getElementById('nlen').textContent=v.length;
-  checkReady();
-}
-function checkReady(){
-  const n=document.getElementById('agent-name').value.trim();
-  document.getElementById('btn-conf').classList.toggle('rdy',n.length>=2&&selAv!==null);
-}
-function confirmAgent(){
-  const n=document.getElementById('agent-name').value.trim();
-  if(!n||selAv===null)return;
-  P.name=n.toUpperCase();
-  P.avatar=AVATARS[selAv];
-  buildMap();
-  show('sm');
+
+function createAgent(){
+  const n=document.getElementById('name-inp').value.trim().toUpperCase();
+  if(!n){alert('Ingresa un nombre de agente');return;}
+  P.name=n;P.avatar=AVATARS[selAv];
+  buildMap();show('sm');
 }
 
-/* ═══ MAPA ═══ */
+/* ══════════════════════════════════════
+   MAPA
+══════════════════════════════════════ */
 function buildMap(){
-  document.getElementById('pb-av').textContent=P.avatar.e;
-  document.getElementById('pb-nm').textContent=P.name;
-  document.getElementById('pb-xp').textContent='⚡ '+P.xp+' XP';
-  const list=document.getElementById('mod-list');
-  list.innerHTML='';
-  MODS.forEach(mod=>{
+  document.getElementById('map-av').textContent=P.avatar.emoji;
+  document.getElementById('map-name').textContent=P.name;
+  document.getElementById('map-xp').textContent='⚡ '+P.xp+' XP';
+  const list=document.getElementById('mod-list');list.innerHTML='';
+  MODULES.forEach((mod,i)=>{
+    const unlocked=i===0||P.completed.includes(i);
     const done=P.completed.includes(mod.id);
-    // Módulo desbloqueado si es el 1, o si el anterior está completado
-    const unlocked=mod.id===1||P.completed.includes(mod.id-1)||done;
-    const cl='mod-card '+(done?'done':unlocked?'open':'lock');
+    const cl='mod-card'+(unlocked&&!done?' active':done?' active':' locked');
     const stHtml=done?'<span class="mod-st st-done">✓ Completado</span>':unlocked?'<span class="mod-st st-open">▶ Jugar</span>':'<span class="mod-st st-lock">🔒 Bloqueado</span>';
     const card=document.createElement('div');
     card.className=cl;
     card.innerHTML=`<div class="mod-ico-w">${mod.icon}</div><div class="mod-info"><div class="mod-num">MÓDULO 0${mod.id}</div><div class="mod-name">${mod.name}</div><div class="mod-desc">${mod.desc}</div></div><div class="mod-r"><div class="mod-xp">⚡ ${mod.xp} XP</div>${stHtml}</div>`;
     if(unlocked&&!done)card.onclick=()=>startModule(mod.id);
+    else if(done)card.onclick=()=>startModule(mod.id);
     list.appendChild(card);
   });
 }
 
+/* ══════════════════════════════════════
+   INICIAR MÓDULO
+══════════════════════════════════════ */
 function startModule(id){
   curMod=id;
+  document.getElementById('res-host').classList.remove('on');
+  document.getElementById('fb-ov').classList.remove('on');
+
   if(id===1){
-    setupM1UI();
     G1={cards:[...CARDS1].sort(()=>Math.random()-0.5),idx:0,xp:0,ok:0,err:0,timer:null,t:100,hinted:false,answered:false};
-    document.getElementById('res-host').classList.remove('on');
     document.getElementById('g-ttl').textContent='🎯 MÓDULO 01 — DETECTOR DE AMENAZAS';
+    document.getElementById('czone').style.display='flex';
+    document.getElementById('izone').style.display='none';
+    document.getElementById('act-zone').style.display='grid';
     buildDots(G1.cards.length);
     loadCard1();
-    show('sg');
+
   } else if(id===2){
-    setupM2UI();
-    G2={cards:[...CARDS2].sort(()=>Math.random()-0.5),idx:0,xp:0,ok:0,err:0,timer:null,t:100,answered:false,ingredients:{}};
-    document.getElementById('res-host').classList.remove('on');
-    document.getElementById('g-ttl').textContent='🔐 MÓDULO 02 — CONSTRUCTOR DE ESCUDOS';
+    G2={cards:[...CARDS2],idx:0,xp:0,ok:0,err:0,timer:null,t:100,
+        phase:1,p1ok:false,p2ok:false,p3ok:false,answered:false};
+    document.getElementById('g-ttl').textContent='🔍 MÓDULO 02 — INSPECTOR DE CONTRASEÑAS';
+    document.getElementById('czone').style.display='none';
+    document.getElementById('izone').style.display='flex';
     buildDots(G2.cards.length);
     loadCard2();
-    show('sg');
   }
+
+  updateGStats(id===1?G1:G2);
+  show('sg');
 }
 
-function setupM1UI(){
-  document.getElementById('czone').style.display='flex';
-  document.getElementById('fzone').style.display='none';
-  document.getElementById('act-zone').style.display='grid';
-}
-function setupM2UI(){
-  document.getElementById('czone').style.display='none';
-  document.getElementById('fzone').style.display='flex';
-  document.getElementById('act-zone').style.display='none';
-}
-
-/* ═══ STATS ═══ */
-function buildStats(){
-  document.getElementById('sp-av').textContent=P.avatar.e;
-  document.getElementById('sp-name').textContent=P.name;
-  const titles=['APRENDIZ CYBER','PRIMERA DEFENSA','GUARDIÁN DIGITAL','AGENTE ÉLITE'];
-  const ti=P.xp<50?0:P.xp<150?1:P.xp<300?2:3;
-  document.getElementById('sp-title').textContent=titles[ti];
-  document.getElementById('sp-xp').textContent=P.xp;
-
-  const totalGames=P.history.length;
-  const totalCorrect=P.history.reduce((a,h)=>a+h.ok,0);
-  const totalQ=P.history.reduce((a,h)=>a+h.total,0);
-  const avgAcc=totalQ>0?Math.round(totalCorrect/totalQ*100):0;
-
-  document.getElementById('stats-grid').innerHTML=`
-    <div class="sg"><div class="sg-val" style="color:var(--cyan)">${P.xp}</div><div class="sg-lbl">XP Total</div></div>
-    <div class="sg"><div class="sg-val" style="color:var(--green)">${P.completed.length}</div><div class="sg-lbl">Módulos</div></div>
-    <div class="sg"><div class="sg-val" style="color:var(--yel)">${totalGames}</div><div class="sg-lbl">Partidas</div></div>
-    <div class="sg"><div class="sg-val" style="color:var(--purp)">${avgAcc}%</div><div class="sg-lbl">Precisión</div></div>
-    <div class="sg"><div class="sg-val" style="color:var(--ora)">${totalCorrect}</div><div class="sg-lbl">Correctas</div></div>
-    <div class="sg"><div class="sg-val" style="color:var(--red)">${P.history.reduce((a,h)=>a+h.err,0)}</div><div class="sg-lbl">Errores</div></div>
-  `;
-
-  const hl=document.getElementById('hist-list');
-  if(P.history.length===0){
-    hl.innerHTML='<div class="hist-empty">AÚN NO HAY PARTIDAS REGISTRADAS<br>¡JUEGA UN MÓDULO PARA VER TU HISTORIAL!</div>';
-    return;
-  }
-  hl.innerHTML=P.history.slice().reverse().map(h=>{
-    const acc=Math.round(h.ok/h.total*100);
-    const col=acc>=80?'var(--green)':acc>=50?'var(--yel)':'var(--red)';
-    const mod=MODS.find(m=>m.id===h.mod);
-    return `<div class="hist-item">
-      <div class="hi-mod">${mod?mod.icon:'🛡️'}</div>
-      <div class="hi-info">
-        <div class="hi-name">${mod?mod.name:'Módulo'}</div>
-        <div class="hi-date">${h.date}</div>
-      </div>
-      <div class="hi-right">
-        <div class="hi-acc" style="color:${col}">${acc}%</div>
-        <div class="hi-xp">+${h.xp} XP</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// Interceptar clic en stats
-document.querySelector('.btn-stats').onclick=()=>{buildStats();show('ss');};
-
-/* ═══ DATOS MÓDULO 1 ═══ */
-const CARDS1=[
-  {type:'email',icon:'📧',lbl:'EMAIL',stripe:'s-email',from:'seguridad@bancobcr.fi.cr.login-verify.xyz',subj:'⚠️ Su cuenta ha sido bloqueada temporalmente',body:'Estimado cliente, hemos detectado actividad inusual en su cuenta. Para desbloquearla debe verificar su identidad en las próximas 24 horas o perderá acceso permanentemente.',link:'http://bcr-verificar-cuenta.xyz/login',ans:'phish',clues:['El dominio del BCR es .fi.cr — no .xyz','Los bancos NUNCA bloquean cuentas por email','"24 horas o perderá acceso" es presión falsa'],explain:'El dominio "bcr-verificar-cuenta.xyz" es falso. Los bancos de Costa Rica usan .fi.cr. Este es un phishing bancario clásico.',xp:10},
-  {type:'sms',icon:'📱',lbl:'SMS',stripe:'s-sms',from:'+506 8888-0000 (desconocido)',subj:'Correos de CR — Paquete retenido',body:'Su paquete #CR4829 está retenido en aduana. Pague ₡2.500 de impuesto para liberarlo antes de hoy o será devuelto.',link:'correos-cr-pago.net/paquete',ans:'phish',clues:['Correos CR nunca cobra por SMS con link externo','El sitio oficial es correoscr.com','Los cobros reales se hacen en sucursales'],explain:'Smishing clásico. Correos de Costa Rica no envía SMS con links de pago. El sitio oficial es correoscr.com.',xp:10},
-  {type:'email',icon:'📧',lbl:'EMAIL',stripe:'s-email',from:'noreply@google.com',subj:'Nuevo inicio de sesión en tu cuenta de Google',body:'Se detectó un nuevo inicio de sesión en tu cuenta desde San José, Costa Rica, el día de hoy a las 10:34 a.m. Si fuiste tú, no necesitas hacer nada.',link:null,ans:'safe',clues:['El dominio es google.com — oficial','No pide hacer clic ni ingresar datos','Es solo una notificación informativa'],explain:'Email legítimo. Google notifica inicios de sesión desde noreply@google.com sin pedir clics ni datos.',xp:10},
-  {type:'social',icon:'💬',lbl:'WHATSAPP',stripe:'s-social',from:'Número desconocido (+1 305-xxx-xxxx)',subj:'🎁 ¡Ganaste un iPhone 15!',body:'¡Felicidades! Eres el ganador #1000 de nuestro sorteo. Reclama tu iPhone 15 GRATIS. Solo paga el envío de $9.99. Oferta válida por 2 horas.',link:'sorteo-iphone-gratis.com/reclamar',ans:'phish',clues:['Nadie regala iPhones a desconocidos','Urgencia falsa: solo 2 horas','"Solo paga el envío" captura tu tarjeta'],explain:'Scam de premio falso. El objetivo es robar datos de tu tarjeta con el cobro del "envío".',xp:10},
-  {type:'web',icon:'🌐',lbl:'SITIO WEB',stripe:'s-web',from:'https://www.hacienda.go.cr',subj:'Portal ATV — Declaración de Renta 2024',body:'Ministerio de Hacienda de Costa Rica. Ingrese con su firma digital o usuario y contraseña de ATV para presentar su declaración de renta.',link:'https://www.hacienda.go.cr/ATV',ans:'safe',clues:['El dominio .go.cr es exclusivo del Gobierno CR','HTTPS activo con dominio oficial','La URL coincide con el ministerio real'],explain:'Sitio real del Ministerio de Hacienda. El dominio .go.cr solo puede usarlo el Gobierno de Costa Rica.',xp:10},
-  {type:'email',icon:'📧',lbl:'EMAIL',stripe:'s-email',from:'soporte@netflix-cr.com',subj:'Problema con tu suscripción de Netflix',body:'Tu pago mensual fue rechazado. Actualiza tu método de pago en las próximas 48 horas para no perder acceso a tu contenido favorito.',link:'netflix-cr.com/actualizar-pago',ans:'phish',clues:['Netflix usa @netflix.com, no @netflix-cr.com','El link va a netflix-cr.com, no netflix.com','Netflix no usa dominios con guion o región'],explain:'El dominio "netflix-cr.com" es falso. Netflix siempre usa "netflix.com". Ataque para robar datos de tarjeta.',xp:10},
-  {type:'sms',icon:'📱',lbl:'SMS',stripe:'s-sms',from:'BACCR (remitente corporativo)',subj:'Código de verificación BAC',body:'Tu código de verificación BAC es: 847291. Válido por 5 minutos. Si no solicitaste este código, ignora este mensaje.',link:null,ans:'safe',clues:['Viene de remitente corporativo oficial','Solo entrega un código, no pide datos','Si no lo pediste, dice que lo ignores — legítimo'],explain:'SMS legítimo. Los bancos envían códigos desde remitentes corporativos sin links.',xp:10},
-  {type:'email',icon:'📧',lbl:'EMAIL',stripe:'s-email',from:'rrhh-pagos@empresa.com',subj:'Actualización urgente de cuenta IBAN para salario',body:'Estimado colaborador, por disposición gerencial todos deben actualizar su cuenta IBAN para pago de salario. Responda este correo con su número IBAN antes del viernes.',link:null,ans:'phish',clues:['RRHH NUNCA pide datos bancarios por email','El cambio de cuenta es presencial con formulario','Ataque BEC — muy usado en empresas de CR'],explain:'Ataque Business Email Compromise (BEC). Recursos Humanos nunca solicita IBANs por correo.',xp:15},
-];
-
-/* ═══ DATOS MÓDULO 2 ═══ */
-const INGR_DEFS=[
-  {id:'upper',label:'Mayúsculas A-Z',icon:'🔠',sample:'ABC',cls:'active-abc',pts:20,desc:'Letras en mayúscula'},
-  {id:'lower',label:'Minúsculas a-z',icon:'🔡',sample:'abc',cls:'active-abc',pts:15,desc:'Letras en minúscula'},
-  {id:'num',label:'Números 0-9',icon:'🔢',sample:'123',cls:'active-num',pts:20,desc:'Dígitos numéricos'},
-  {id:'sym',label:'Símbolos !@#',icon:'✨',sample:'!@#',cls:'active-sym',pts:25,desc:'Caracteres especiales'},
-  {id:'len',label:'Extra largo (+8)',icon:'📏',sample:'...',cls:'active-len',pts:20,desc:'Longitud de 12+ caracteres'},
-];
-
-const CARDS2=[
-  {scenario:'ESCENARIO 01 — RED SOCIAL',question:'Estás creando una cuenta en Instagram. ¿Cuál contraseña es más segura?',target:60,explain:'Las contraseñas fuertes combinan mayúsculas, números y símbolos con buena longitud. Evita palabras del diccionario.',xp:15},
-  {scenario:'ESCENARIO 02 — BANCA EN LÍNEA',question:'Tu banco pide crear una nueva contraseña. Necesita ser imposible de adivinar.',target:80,explain:'Para banca en línea necesitas máxima seguridad: todos los tipos de caracteres y longitud superior a 12 caracteres.',xp:20},
-  {scenario:'ESCENARIO 03 — CORREO LABORAL',question:'Tu empresa requiere una contraseña para el email corporativo con política de seguridad estricta.',target:70,explain:'El email laboral da acceso a información sensible. Combina al menos 3 tipos de caracteres y usa longitud extendida.',xp:15},
-  {scenario:'ESCENARIO 04 — CUENTA DE JUEGO',question:'Quieres proteger tu cuenta de videojuego donde tienes artículos valiosos.',target:60,explain:'Aunque sea una cuenta de juego, los hackers las roban para venderlas. Una contraseña fuerte la protege igual.',xp:12},
-  {scenario:'ESCENARIO 05 — CUENTA MAESTRA',question:'Vas a crear un gestor de contraseñas que protegerá TODAS tus cuentas. Máxima seguridad.',target:90,explain:'Un gestor de contraseñas necesita la contraseña más fuerte posible. Todos los ingredientes y máxima longitud.',xp:25},
-  {scenario:'ESCENARIO 06 — RED WIFI HOGAR',question:'Configuras la contraseña de tu router WiFi que usará toda tu familia.',target:70,explain:'El WiFi da acceso a toda tu red. Una contraseña débil permite que extraños usen tu conexión y espíen tu tráfico.',xp:15},
-];
-
-/* ═══ ESTADO MÓDULO 1 ═══ */
-let G1={cards:[],idx:0,xp:0,ok:0,err:0,timer:null,t:100,hinted:false,answered:false};
-/* ═══ ESTADO MÓDULO 2 ═══ */
-let G2={cards:[],idx:0,xp:0,ok:0,err:0,timer:null,t:100,answered:false,ingredients:{}};
-
-/* ═══ TIMER COMPARTIDO (38 segundos) ═══ */
-const TICK=380; // 100 pasos × 380ms = 38 segundos
-
-/* ═══ DOTS ═══ */
-function buildDots(n){
-  const w=document.getElementById('pdots');
-  w.innerHTML='';
-  for(let i=0;i<n;i++){
-    const d=document.createElement('div');
-    d.className='pd'+(i===0?' cur':'');
-    d.id='pd'+i;
-    w.appendChild(d);
-  }
-}
-function markDot(i,ok){
-  const d=document.getElementById('pd'+i);
-  if(d){d.classList.remove('cur');d.classList.add(ok?'ok':'er');}
-}
-function advDot(i){
-  const d=document.getElementById('pd'+i);
-  if(d)d.classList.add('cur');
-}
-
-/* ═══ MÓDULO 1 ═══ */
+/* ══════════════════════════════════════
+   MÓDULO 1 — DETECTOR DE AMENAZAS
+══════════════════════════════════════ */
 function loadCard1(){
   if(G1.idx>=G1.cards.length){endGame(1);return;}
   const c=G1.cards[G1.idx];
   G1.answered=false;G1.hinted=false;
-  document.getElementById('tc-str').className='tc-stripe '+c.stripe;
   document.getElementById('tc-ico').textContent=c.icon;
-  document.getElementById('tc-type').textContent=c.lbl;
   document.getElementById('tc-from').textContent=c.from;
   document.getElementById('tc-subj').textContent=c.subj;
-  document.getElementById('tc-cont').textContent=c.body;
+  document.getElementById('cl-body-main').textContent=c.body;
   const lk=document.getElementById('tc-link');
-  if(c.link){lk.style.display='inline-block';lk.textContent=c.link;}else{lk.style.display='none';}
+  if(c.link){lk.textContent='🔗 '+c.link;lk.style.display='inline-block';}else{lk.style.display='none';}
+  document.getElementById('cl-body').innerHTML='';
   document.getElementById('tc-clues').classList.remove('on');
-  const hb=document.getElementById('hint-btn');
-  hb.textContent='💡 Ver pista del experto (−5 XP)';hb.disabled=false;
+  const hb=document.getElementById('hint-btn');hb.textContent='💡 VER PISTAS (−5 XP)';hb.disabled=false;
   updateGStats(G1);
-  const tc=document.getElementById('tcard');
-  tc.style.animation='none';requestAnimationFrame(()=>{tc.style.animation='';});
   if(G1.idx>0)advDot(G1.idx);
   startTimer(()=>timeOut1());
 }
 
-function answer(choice){
+function answer1(ans){
   if(G1.answered)return;
   G1.answered=true;clearInterval(G1.timer);
   const c=G1.cards[G1.idx];
-  const ok=choice===c.ans;
-  if(ok){G1.xp+=(G1.hinted?Math.max(0,c.xp-5):c.xp);G1.ok++;}else{G1.err++;}
+  const ok=ans===c.ans;
+  const earned=ok?c.xp:0;
+  G1.xp+=earned;
+  if(ok){G1.ok++;if(ok)spawnParticles();}else{G1.err++;}
   markDot(G1.idx,ok);
-  if(ok)spawnParticles();
-  showFeedback(ok,c.explain,(ok?G1.hinted?Math.max(0,c.xp-5):c.xp:0),ok?'🎯':'💥',ok?'¡AMENAZA DETECTADA!':'¡EL ATAQUE FUNCIONÓ!');
+  showFeedback(ok,c.explain,earned,ok?'🛡️':'💀',ok?'¡AMENAZA DETECTADA!':'¡EL ATAQUE FUNCIONÓ!');
 }
+
 function timeOut1(){
   G1.answered=true;G1.err++;
   markDot(G1.idx,false);
   showFeedback(false,G1.cards[G1.idx].explain,0,'⏱️','TIEMPO AGOTADO');
 }
+
 function useHint(){
   if(G1.hinted)return;G1.hinted=true;
   G1.xp=Math.max(0,G1.xp-5);
@@ -780,99 +903,151 @@ function useHint(){
   updateGStats(G1);
 }
 
-/* ═══ MÓDULO 2 ═══ */
+/* ══════════════════════════════════════
+   MÓDULO 2 — INSPECTOR DE CONTRASEÑAS
+══════════════════════════════════════ */
 function loadCard2(){
   if(G2.idx>=G2.cards.length){endGame(2);return;}
   const c=G2.cards[G2.idx];
-  G2.answered=false;
-  G2.ingredients={upper:false,lower:false,num:false,sym:false,len:false};
-  document.getElementById('f-scenario').textContent=c.scenario;
-  document.getElementById('f-question').textContent=c.question;
-  updateForgeDisplay();
-  buildIngredients();
-  document.getElementById('forge-submit').disabled=true;
-  updateGStats(G2);
-  const fc=document.getElementById('forge-card');
-  fc.style.animation='none';requestAnimationFrame(()=>{fc.style.animation='';});
+  G2.phase=1;G2.p1ok=false;G2.p2ok=false;G2.p3ok=false;G2.answered=false;
+
+  document.getElementById('insp-scenario').textContent=c.scenario;
+  document.getElementById('insp-pw').textContent=c.pw;
+
   if(G2.idx>0)advDot(G2.idx);
-  startTimer(()=>timeOut2());
+  updateGStats(G2);
+  showPhase(1);
+  startTimer(()=>timeOutInspector());
 }
 
-function buildIngredients(){
-  const g=document.getElementById('ingr-grid');
-  g.innerHTML='';
-  INGR_DEFS.forEach(ing=>{
+function showPhase(p){
+  G2.phase=p;
+  document.getElementById('phase1-zone').style.display='none';
+  document.getElementById('phase2-zone').style.display='none';
+  document.getElementById('phase3-zone').style.display='none';
+
+  hidePhaseFb('p1-fb');hidePhaseFb('p2-fb');hidePhaseFb('p3-fb');
+  document.getElementById('btn-p1-next').classList.remove('show');
+  document.getElementById('btn-p2-next').classList.remove('show');
+  document.getElementById('btn-p3-next').classList.remove('show');
+
+  const c=G2.cards[G2.idx];
+
+  if(p===1){
+    document.getElementById('phase1-zone').style.display='flex';
+    enableClsButtons(true);
+
+  } else if(p===2){
+    document.getElementById('phase2-zone').style.display='flex';
+    document.getElementById('p2-question').textContent=c.diagQ;
+    buildDiagOptions(c);
+
+  } else if(p===3){
+    document.getElementById('phase3-zone').style.display='flex';
+    buildImproveOptions(c);
+  }
+}
+
+function enableClsButtons(enabled){
+  document.querySelectorAll('.cls-btn').forEach(b=>{b.disabled=!enabled;b.style.opacity=enabled?'1':'0.5';});
+}
+
+function ansPhase1(ans){
+  enableClsButtons(false);
+  const c=G2.cards[G2.idx];
+  const ok=ans===c.type;
+  G2.p1ok=ok;
+  if(ok){G2.xp+=5;G2.xp=G2.xp;}
+  updateGStats(G2);
+  const typeLabels={weak:'DÉBIL ⚠️',strong:'FUERTE 🔒',trap:'TRAMPA 🪤'};
+  showPhaseFb('p1-fb',ok,ok?'+5 XP — ¡Correcto! Es '+typeLabels[c.type]:'Incorrecto. Es '+typeLabels[c.type]+' — '+c.explain.substring(0,60)+'…');
+  document.getElementById('btn-p1-next').classList.add('show');
+}
+
+function buildDiagOptions(c){
+  const opts=[...c.diagOpts].sort(()=>Math.random()-0.5);
+  const g=document.getElementById('diag-options');g.innerHTML='';
+  opts.forEach(opt=>{
     const b=document.createElement('button');
-    b.className='ingr-btn inactive';
-    b.id='ingr-'+ing.id;
-    b.innerHTML=`<span class="ingr-ico">${ing.icon}</span><span>${ing.label}</span>`;
+    b.className='diag-btn';
+    b.innerHTML=`<span class="diag-dot"></span>${opt.text}`;
     b.onclick=()=>{
-      G2.ingredients[ing.id]=!G2.ingredients[ing.id];
-      b.className='ingr-btn '+(G2.ingredients[ing.id]?ing.cls:'inactive');
-      updateForgeDisplay();
+      document.querySelectorAll('.diag-btn').forEach(x=>{x.disabled=true;x.style.opacity='0.6';});
+      b.style.opacity='1';
+      const ok=opt.correct;
+      G2.p2ok=ok;
+      if(ok){G2.xp+=10;}
+      updateGStats(G2);
+      showPhaseFb('p2-fb',ok,ok?'+10 XP — ¡Diagnóstico correcto!':'Incorrecto. La respuesta correcta era: '+c.diagOpts.find(x=>x.correct).text);
+      document.getElementById('btn-p2-next').classList.add('show');
     };
     g.appendChild(b);
   });
 }
 
-function calcStrength(){
-  const i=G2.ingredients;
-  let pts=0;
-  if(i.upper)pts+=20;if(i.lower)pts+=15;if(i.num)pts+=20;if(i.sym)pts+=25;if(i.len)pts+=20;
-  return Math.min(pts,100);
+function buildImproveOptions(c){
+  const opts=c.improveOpts;
+  const g=document.getElementById('improve-options');g.innerHTML='';
+  opts.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='impr-btn';
+    b.innerHTML=`<span class="impr-pw">${opt.pw}</span><span class="impr-hint">${opt.label}</span>`;
+    b.onclick=()=>{
+      document.querySelectorAll('.impr-btn').forEach(x=>{x.disabled=true;x.style.opacity='0.6';});
+      b.style.opacity='1';
+      const ok=!!opt.correct;
+      G2.p3ok=ok;
+      if(ok){G2.xp+=15;}
+      updateGStats(G2);
+      const best=opts.find(x=>x.correct);
+      showPhaseFb('p3-fb',ok,ok?'+15 XP — ¡Elección correcta! Es la más segura.':'Incorrecto. La más segura era: '+best.pw+' — '+best.label);
+      document.getElementById('btn-p3-next').classList.add('show');
+    };
+    g.appendChild(b);
+  });
 }
 
-function updateForgeDisplay(){
-  const str=calcStrength();
-  // Construir contraseña de ejemplo
-  let pw='';
-  const i=G2.ingredients;
-  if(i.lower)pw+='secure';
-  if(i.upper)pw+='KEY';
-  if(i.num)pw+='47';
-  if(i.sym)pw+='!@#';
-  if(i.len)pw+='Extra12Chars';
-  if(!pw)pw='tu-contraseña';
-
-  const disp=document.getElementById('f-pw');
-  disp.textContent=pw;
-  disp.className='forge-pw-display '+(str<40?'weak':str<70?'medium':'');
-
-  const fill=document.getElementById('str-fill');
-  const val=document.getElementById('str-val');
-  let col,lbl;
-  if(str<40){col='var(--red)';lbl='MUY DÉBIL';}
-  else if(str<60){col='var(--ora)';lbl='DÉBIL';}
-  else if(str<80){col='var(--yel)';lbl='MEDIA';}
-  else{col='var(--green)';lbl='FUERTE';}
-  fill.style.width=str+'%';fill.style.background=col;
-  val.textContent=lbl;val.style.color=col;
-
-  const anySelected=Object.values(G2.ingredients).some(v=>v);
-  document.getElementById('forge-submit').disabled=!anySelected;
-}
-
-function submitForge(){
-  if(G2.answered)return;
-  G2.answered=true;clearInterval(G2.timer);
+function finishChallenge(){
+  clearInterval(G2.timer);
   const c=G2.cards[G2.idx];
-  const str=calcStrength();
-  const ok=str>=c.target;
-  const earned=ok?Math.round(c.xp*(str/100)):Math.round(c.xp*0.3);
-  G2.xp+=earned;
-  if(ok){G2.ok++;}else{G2.err++;}
-  markDot(G2.idx,ok);
-  if(ok)spawnParticles();
-  const expFull=c.explain+' Fortaleza alcanzada: '+str+'%.';
-  showFeedback(ok,expFull,earned,ok?'🔐':'💥',ok?'¡ESCUDO FORJADO!':'ESCUDO INSUFICIENTE');
+  const perfect=G2.p1ok&&G2.p2ok&&G2.p3ok;
+  if(perfect){G2.xp+=30;G2.ok++;}else if(G2.p1ok||G2.p2ok||G2.p3ok){G2.ok++;}else{G2.err++;}
+  markDot(G2.idx,G2.p1ok||G2.p2ok||G2.p3ok);
+  updateGStats(G2);
+
+  const totalEarned=(G2.p1ok?5:0)+(G2.p2ok?10:0)+(G2.p3ok?15:0)+(perfect?30:0);
+  if(perfect)spawnParticles();
+
+  let ico,ttl,exp;
+  if(perfect){ico='🏆';ttl='¡RETO PERFECTO! +30 XP BONUS';}
+  else if(G2.p1ok&&G2.p2ok){ico='🔐';ttl='¡BUEN ANÁLISIS!';}
+  else if(G2.p1ok){ico='🔍';ttl='Identificación correcta';}
+  else{ico='💡';ttl='Sigue practicando';}
+
+  showFeedback(G2.p1ok||G2.p2ok||G2.p3ok,c.explain,totalEarned,ico,ttl);
 }
-function timeOut2(){
+
+function timeOutInspector(){
+  if(G2.answered)return;
   G2.answered=true;G2.err++;
   markDot(G2.idx,false);
-  submitForge();
+  updateGStats(G2);
+  showFeedback(false,'Tiempo agotado. '+G2.cards[G2.idx].explain,0,'⏱️','TIEMPO AGOTADO');
 }
 
-/* ═══ TIMER ═══ */
+function showPhaseFb(id,ok,msg){
+  const el=document.getElementById(id);
+  el.textContent=msg;
+  el.className='phase-fb show '+(ok?'ok':'fail');
+}
+function hidePhaseFb(id){
+  const el=document.getElementById(id);
+  el.className='phase-fb';el.textContent='';
+}
+
+/* ══════════════════════════════════════
+   TIMER
+══════════════════════════════════════ */
 function startTimer(onEnd){
   const G=curMod===1?G1:G2;
   clearInterval(G.timer);
@@ -888,18 +1063,39 @@ function startTimer(onEnd){
   },TICK);
 }
 
+/* ══════════════════════════════════════
+   DOTS
+══════════════════════════════════════ */
+function buildDots(n){
+  const w=document.getElementById('pdots');w.innerHTML='';
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div');
+    d.className='pd'+(i===0?' cur':'');d.id='pd'+i;w.appendChild(d);
+  }
+}
+function markDot(i,ok){
+  const d=document.getElementById('pd'+i);
+  if(d){d.classList.remove('cur');d.classList.add(ok?'ok':'fail');}
+}
+function advDot(i){
+  const d=document.getElementById('pd'+i);
+  if(d)d.classList.add('cur');
+}
+
 function updateGStats(G){
   document.getElementById('g-xp').textContent=G.xp;
   document.getElementById('g-ok').textContent=G.ok;
   document.getElementById('g-err').textContent=G.err;
 }
 
-/* ═══ FEEDBACK ═══ */
+/* ══════════════════════════════════════
+   FEEDBACK OVERLAY (fin de reto)
+══════════════════════════════════════ */
 function showFeedback(ok,explain,xp,ico,ttl){
   document.getElementById('fb-ico').textContent=ico;
   document.getElementById('fb-ttl').textContent=ttl;
   document.getElementById('fb-exp').textContent=explain;
-  document.getElementById('fb-xp').textContent=ok?'+'+xp+' XP':'0 XP';
+  document.getElementById('fb-xp').textContent=ok?'+'+xp+' XP total':'0 XP';
   document.getElementById('fb-box').className='fb-box '+(ok?'ok':'fail');
   document.getElementById('fb-ov').classList.add('on');
 }
@@ -910,7 +1106,9 @@ function nextCard(){
   else{G2.idx++;loadCard2();}
 }
 
-/* ═══ FIN DE MÓDULO ═══ */
+/* ══════════════════════════════════════
+   FIN DE MÓDULO
+══════════════════════════════════════ */
 function endGame(mod){
   const G=mod===1?G1:G2;
   const total=G.cards.length;
@@ -920,10 +1118,10 @@ function endGame(mod){
   document.getElementById('r-acc').textContent=acc+'%';
 
   let sh,ttl,sub,bico,bnm;
-  if(acc===100){sh='🛡️';ttl='PERFECCIÓN ABSOLUTA';sub='NINGÚN ATAQUE PASÓ — ERES ÉLITE';bico='🏆';bnm='AGENTE ÉLITE';}
-  else if(acc>=75){sh='🛡️';ttl='MISIÓN EXITOSA';sub='TU ESCUDO RESISTIÓ';bico='🥇';bnm='GUARDIÁN DIGITAL';}
-  else if(acc>=50){sh='⚔️';ttl='EN ENTRENAMIENTO';sub='SIGUE PRACTICANDO';bico='🥈';bnm='PRIMERA DEFENSA';}
-  else{sh='🔰';ttl='LOS HACKERS GANARON';sub='PERO YA SABES MÁS';bico='🎖️';bnm='APRENDIZ CYBER';}
+  if(acc===100){sh='🛡️';ttl='PERFECCIÓN ABSOLUTA';sub='EXPERTO EN CONTRASEÑAS';bico='🏆';bnm='MAESTRO DE CONTRASEÑAS';}
+  else if(acc>=70){sh='🛡️';ttl='MISIÓN EXITOSA';sub='TU DEFENSA ES SÓLIDA';bico='🥇';bnm='INSPECTOR PRO';}
+  else if(acc>=40){sh='⚔️';ttl='EN ENTRENAMIENTO';sub='SIGUE PRACTICANDO';bico='🥈';bnm='INSPECTOR JUNIOR';}
+  else{sh='🔰';ttl='LAS CONTRASEÑAS GANARON';sub='PERO YA SABES MÁS';bico='🎖️';bnm='APRENDIZ CYBER';}
 
   document.getElementById('r-sh').textContent=sh;
   document.getElementById('r-ttl').textContent=ttl;
@@ -934,7 +1132,6 @@ function endGame(mod){
   if(!P.completed.includes(mod))P.completed.push(mod);
   P.xp+=G.xp;
 
-  // Guardar historial
   const now=new Date();
   P.history.push({
     mod,ok:G.ok,err:G.err,total,xp:G.xp,
@@ -947,7 +1144,42 @@ function endGame(mod){
 
 function replayMod(){document.getElementById('res-host').classList.remove('on');startModule(curMod);}
 
-/* ═══ PARTÍCULAS ═══ */
+/* ══════════════════════════════════════
+   STATS
+══════════════════════════════════════ */
+function showStats(){
+  document.getElementById('sp-av').textContent=P.avatar.emoji;
+  document.getElementById('sp-name').textContent=P.name;
+  const titles=['APRENDIZ CYBER','PRIMERA DEFENSA','GUARDIÁN DIGITAL','AGENTE ÉLITE'];
+  const ti=P.xp<50?0:P.xp<200?1:P.xp<400?2:3;
+  document.getElementById('sp-title').textContent=titles[ti];
+  document.getElementById('sp-xp').textContent='⚡ '+P.xp+' XP';
+
+  const totalGames=P.history.length;
+  const totalOk=P.history.reduce((a,h)=>a+h.ok,0);
+  const totalQ=P.history.reduce((a,h)=>a+h.total,0);
+  const avgAcc=totalQ>0?Math.round(totalOk/totalQ*100):0;
+
+  document.getElementById('st-mods').textContent=P.completed.length;
+  document.getElementById('st-games').textContent=totalGames;
+  document.getElementById('st-acc').textContent=avgAcc+'%';
+  document.getElementById('st-ok').textContent=totalOk;
+
+  const mNames=['','🎯 Detector','🔍 Inspector','🕵️ Encubierto','🗺️ Riesgos','🧠 Mentalidad','🏰 Torre'];
+  const hl=document.getElementById('hist-list');
+  hl.innerHTML=P.history.length===0?'<div style="color:var(--muted);font-size:14px;text-align:center;padding:20px">Sin partidas aún</div>':'';
+  [...P.history].reverse().forEach(h=>{
+    const it=document.createElement('div');
+    it.className='hist-item';
+    it.innerHTML=`<div><div class="hist-mod">${mNames[h.mod]||'Módulo '+h.mod}</div><div class="hist-date">${h.date}</div></div><div style="text-align:right"><div class="hist-score">${h.ok}/${h.total} — ⚡${h.xp} XP</div></div>`;
+    hl.appendChild(it);
+  });
+  show('sst');
+}
+
+/* ══════════════════════════════════════
+   PARTÍCULAS
+══════════════════════════════════════ */
 function spawnParticles(){
   const cv=document.getElementById('ptcl');
   const ctx=cv.getContext('2d');
@@ -958,13 +1190,12 @@ function spawnParticles(){
     r:Math.random()*5+2,
     c:['#00ff88','#00e5ff','#ffd60a','#bf5af2'][Math.floor(Math.random()*4)],a:1
   }));
-  let raf;
   (function draw(){
     ctx.clearRect(0,0,cv.width,cv.height);let alive=false;
     pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.17;p.a-=0.013;
       if(p.a>0){alive=true;ctx.globalAlpha=p.a;ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();}
     });ctx.globalAlpha=1;
-    if(alive)raf=requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);
+    if(alive)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);
   })();
 }
 
